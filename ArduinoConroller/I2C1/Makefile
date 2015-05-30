@@ -6,8 +6,8 @@
 DESTDIR=/usr
 PREFIX=/local
 
-#DEBUG	= -g -O0
-DEBUG	= -O2
+DEBUG	= -g3
+#DEBUG	= -O2
 CC	= g++
 INCLUDE	= -I$(DESTDIR)$(PREFIX)/include -I/home/pi/RobotV1/wiringPi/wiringPi
 CFLAGS	= $(DEBUG) -Wall $(INCLUDE) -Winline -pipe -std=gnu++0x 
@@ -28,7 +28,7 @@ t1:	$(OBJ)
 	@echo [Link]
 	@$(CC) -o $@ $(OBJ) $(LDFLAGS) $(LIBS)
 
-.c.o:
+.cpp.o:
 	@echo [Compile] $<
 	@$(CC) -c $(CFLAGS) $< -o $@
 
