@@ -7,7 +7,7 @@ int state = 0;
 void setup() {
     pinMode(13, OUTPUT);
     Serial.begin(9600); // start serial for output
-    Serial.println("========");
+    
     Serial.println("setUp");
     
     // initialize i2c as slave
@@ -51,10 +51,10 @@ void receiveData(int byteCount){
 char s[] = "response=x\n";
 int nextChar = 0;
 void sendData(){
-  Serial.print("Sending: ");
+  //Serial.print("Sending: ");
   
-  s[sizeof(s) - 3] = '0' + number + 1;
-  Serial.println(s[nextChar]);
+  s[sizeof(s) - 3] = number + 1;
+  //Serial.println(s[nextChar]);
   Wire.write(s[nextChar++]);
   
   if (nextChar >= sizeof(s)) {
