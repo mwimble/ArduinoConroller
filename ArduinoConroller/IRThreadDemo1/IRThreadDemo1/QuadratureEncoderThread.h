@@ -1,3 +1,6 @@
+#ifndef _QUADRATURE_ENCODER_THREAD
+#define _QUADRATURE_ENCODER_THREAD
+
 #include "QuadratureEncoder.h"
 
 class QuadratureEncoderThread: public Thread {
@@ -20,3 +23,4 @@ void QuadratureEncoderThread::run() {
 }
 
 long QuadratureEncoderThread::lastCounter = 0;
+#endif

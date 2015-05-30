@@ -1,3 +1,6 @@
+#ifndef _LINE_SENSOR_THREAD
+#define _LINE_SENSOR_THREAD
+
 class LineSensorThread: public Thread {
   private:
     int blink;
@@ -23,17 +26,7 @@ class LineSensorThread: public Thread {
 
 void LineSensorThread::run() {
   readCount++;
-//  Serial.println("RUN");
   position = qtrrc.readLine(sensorValues);
-//  Serial.print("LineSensorThread::run position: ");
-//  Serial.print(position);
-//  Serial.print(" -- ");
-//  for (int i = 0; i < 8; i++) {
-//    Serial.print(" ");
-//    Serial.print(sensorValues[i]);
-//  }
-//  
-//  Serial.println();
   runned(); 
 }
 
@@ -69,3 +62,5 @@ LineSensorThread::LineSensorThread() {
   
   Serial.println("LineSensorThread end");
 }
+
+#endif
