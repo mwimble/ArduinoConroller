@@ -2,6 +2,9 @@
 #include <Thread.h>
 #include <ThreadController.h>
 #include <QTRSensors.h>
+#include <Wire.h>
+
+#include "I2CThread.h"
 #include "LineSensorThread.h"
 #include "MotorDriver.h"
 #include "QuadratureEncoderThread.h"
@@ -12,6 +15,7 @@ static unsigned long totalMillisecondCounter = 0;
 LineSensorThread* lineSensorThread;
 QuadratureEncoderThread* quadratureEncoderThread;
 ThreadController controller = ThreadController();
+//I2CThread* i2cThread;
 
 #define MAP_ROWS 160
 #define CLICKS_PER_ROW 5
@@ -61,6 +65,7 @@ void setup() {
 
   controller.add(lineSensorThread);
   controller.add(quadratureEncoderThread);
+//  i2cThread = new I2CThread();
   Serial.println("setup end");
   delay(1000);
   startTimer5(50000);

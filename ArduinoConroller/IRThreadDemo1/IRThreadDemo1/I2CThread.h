@@ -1,31 +1,39 @@
-#include <Wire.h>
+#ifndef _I2CThread_h
+#define _I2CThread_h
 
-#define SLAVE_ADDRESS 0x0C
-int number = 0;
-int state = 0;
+class I2CThread: public Thread {
+  private:
+  static const int SLAVE_ADDRESS = 0x0C;
 
-void setup() {
-    pinMode(13, OUTPUT);
-    Serial.begin(9600); // start serial for output
-    
-    Serial.println("setUp");
-    
+  static int nextChar; //#####
+  static int number; //#####
+  static char s[12]; //#####
+  static int state; //#####
+ 
+  static void receiveData(int byteCount);
+  static void sendData();
+  
+  public:
+  I2CThread();
+  void run();
+};
+
+I2CThread::I2CThread() {
+    strcpy("response=x\n", I2CThread::s);
     // initialize i2c as slave
     Wire.begin(SLAVE_ADDRESS);
     
     // define callbacks for i2c communication
-    Wire.onReceive(receiveData);
-    Wire.onRequest(sendData);
-    
-    Serial.println("Ready!");
+    Wire.onReceive(I2CThread::receiveData);
+    Wire.onRequest(I2CThread::sendData);  
 }
 
-void loop() {
-  delay(100);
+void I2CThread::run() {
+  
 }
 
-// callback for received data
-void receiveData(int byteCount){
+// Callback for received data
+void I2CThread::receiveData(int byteCount) {
     //Serial.print("reaceiveData byteCount: ");
     //Serial.println(byteCount);
     //int regNum = Wire.read(); // Ignore register.
@@ -33,7 +41,8 @@ void receiveData(int byteCount){
         number = Wire.read();
         Serial.print("data received: ");
         Serial.println(number);
-        if (number == 1){
+        nextChar = 0;
+        if (number == 'x'){
             if (state == 0){
               digitalWrite(13, HIGH); // set the LED on
               Serial.println("Setting LED on");
@@ -47,10 +56,8 @@ void receiveData(int byteCount){
     }
 }
 
-// callback for sending data
-char s[] = "response=x\n";
-int nextChar = 0;
-void sendData(){
+// Callback for sending data
+void I2CThread::sendData() {
   //Serial.print("Sending: ");
   
   s[sizeof(s) - 3] = number + 1;
@@ -62,4 +69,4 @@ void sendData(){
   }
 }
 
-
+#endif
