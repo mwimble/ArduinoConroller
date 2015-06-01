@@ -9,8 +9,21 @@
 ros::NodeHandle  nh;
 ArleneMotor arleneMotor(nh);
 
-void messageCb( const geometry_msgs::Twist& twistMsg){
-  digitalWrite(13, HIGH-digitalRead(13));   // blink the led
+void messageCb( const geometry_msgs::Twist& twistMsg) {
+  ArleneMotor::Command command;
+  if (twistMsg.linear.x > 0) {
+    command.direction = ArleneMotor::FORWARD;
+  } else if (twistMsg.linear.x < 0) {
+    command.direction = ArleneMotor::BACKWARD;
+  } else if (twistMsg.angular.z > 0) {
+    command.direction = ArleneMotor::RIGHT_TURN;
+  } else if (twistMsg.angular.z < 0) {
+    command.direction = ArleneMotor::LEFT_TURN;
+  } else {
+    command.direction = ArleneMotor::STOP;
+  }
+  
+  arleneMotor.enqueue(command);
 }
 
 ros::Subscriber<geometry_msgs::Twist> sub("turtle1/cmd_vel", &messageCb);

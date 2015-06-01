@@ -4,17 +4,26 @@
 
 class MotorController : public Thread {
   private:
-  const QueueList<Command>& _queue;
+  QueueList<ArleneMotor::Command>& _commands;
   
   public:
-  MotorController(const QueueList<Command>& queue) : _queue(queue) {
+  MotorController(QueueList<ArleneMotor::Command>& commands) 
+    : _commands(commands) {
   }
   
   void run() {
+    if (!_commands.isEmpty()) {
+      cli();
+      ArleneMotor::Command command = _commands.pop();
+      sei();
+      digitalWrite(13, HIGH-digitalRead(13));   // blink the led
+    }
+    
+    runned();
   }
   
   bool shouldRun() {
-    return !queue.isEmpty;
+    return !_commands.isEmpty();
   }
 };
 
@@ -26,6 +35,8 @@ ArleneMotor::ArleneMotor(const ros::NodeHandle&  nh) : ThreadController(), _nh(n
   pinMode(SPEED_A, OUTPUT);
   pinMode(SPEED_B, OUTPUT);
   
-  motorThread = new MotorController();
+  motorThread = new MotorController(_commands);
+  motorThread->setInterval(10);
   add(motorThread);
+  run();
 }

@@ -7,7 +7,7 @@
 #include <Thread.h>
 
 class ArleneMotor : ThreadController {
-  private:
+  public:
   
   enum Direction {
     FORWARD,
@@ -17,9 +17,11 @@ class ArleneMotor : ThreadController {
     STOP
   };
   
-  struct Command {
+  typedef struct {
     Direction direction;
-  };
+  } Command;
+  
+  private:
   
   static const int I1 = 8;
   static const int I2 = 11;
@@ -31,13 +33,17 @@ class ArleneMotor : ThreadController {
   const ros::NodeHandle&  _nh;
   
   Thread* motorThread;
-  QueueList<Command> commands;
+  QueueList<Command> _commands;
   
   public:
-  
   ArleneMotor(const ros::NodeHandle&  nh);
   
-  void forward();
+  void enqueue(Command& command) {
+    cli();
+    _commands.push(command);
+    sei();
+  }
+
 };
 
 #endif
