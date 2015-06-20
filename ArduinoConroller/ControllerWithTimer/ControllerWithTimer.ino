@@ -119,7 +119,7 @@ void setup() {
 
 
 void loop() {
-  while(1) {
+  while(Strategy::State() != Strategy::STOP) {
     Serial.print("*[Odo:");
     Serial.print(QuadratureEncoder::Counter());
     Serial.print("] Position: ");

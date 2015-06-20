@@ -15,10 +15,7 @@ class Strategy {
     STOP,
   };
     
-  Strategy() :
-    a_speed_(64),
-    b_speed_(64),
-    state_(FOLLOW_LINE) {
+  Strategy() {
   }
   
   void Initialize() {
@@ -108,6 +105,7 @@ class Strategy {
       case FOUND_END:
         Serial.println("+++ FOUND_END");
         Motor::Stop();
+        state_ = STOP;
         break;
         
       case STOP:
@@ -117,15 +115,25 @@ class Strategy {
     }
   }
   
+  static TState State() { return state_; }
+  
   private:
-  const LineSensor::TSensorArray& lineSensorValues_ = lineSensor.SensorValues();
-  int a_speed_;
-  int b_speed_;
-  float heading_;
-  long lineEndOdo_;
-  long lineStartOdo_;
-  TState state_;
+  static const LineSensor::TSensorArray& lineSensorValues_;
+  static int a_speed_;
+  static int b_speed_;
+  static float heading_;
+  static long lineEndOdo_;
+  static long lineStartOdo_;
+  static TState state_;
 };
+
+const LineSensor::TSensorArray& Strategy::lineSensorValues_ = lineSensor.SensorValues();
+int Strategy::a_speed_ = 64;
+int Strategy::b_speed_ = 64;
+float Strategy::heading_;
+long Strategy::lineEndOdo_;
+long Strategy::lineStartOdo_;
+Strategy::TState Strategy::state_ = FOLLOW_LINE;
 
 #endif
 
