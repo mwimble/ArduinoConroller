@@ -22,9 +22,9 @@ class Strategy {
   }
   
   void Initialize() {
-    motor.Stop();
+    Motor::Stop();
     state_ = FOLLOW_LINE;
-    motor.Forward(a_speed_, b_speed_);
+    Motor::Forward(a_speed_, b_speed_);
   }
   
   void Process() {
@@ -63,7 +63,7 @@ class Strategy {
 
           /*
           if ((a_speed_ > 250) || (b_speed_ < 0)) {
-            motor.Stop();
+            Motor::Stop();
             Serial.print("Correction out of range. Position: ");
             Serial.print(position);
             Serial.print(", a_speed: ");
@@ -78,19 +78,19 @@ class Strategy {
             Serial.print(a_speed_);
             Serial.print(", b_speed: ");
             Serial.println(b_speed_);
-            motor.Forward(a_speed_, b_speed_);
+            Motor::Forward(a_speed_, b_speed_);
           }
           */
         }
                     
-        motor.Forward(a_speed_, b_speed_);
+        Motor::Forward(a_speed_, b_speed_);
         break;
         
       case FIND_LINE_END:
         Serial.println("+++ FOLLOW_LINE_END");
         if (quadratureEncoder.Counter() > (lineStartOdo_ + 700)) {
           state_ = FOUND_END;
-          motor.Stop();
+          Motor::Stop();
         } else if (!leftTurnFound && !rightTurnFound) {
           lineEndOdo_ = quadratureEncoder.Counter();
           Serial.print(">>> Found line end Odo:");
@@ -107,12 +107,12 @@ class Strategy {
         
       case FOUND_END:
         Serial.println("+++ FOUND_END");
-        motor.Stop();
+        Motor::Stop();
         break;
         
       case STOP:
         Serial.println("+++ STOP");
-        motor.Stop();
+        Motor::Stop();
         break;
     }
   }
