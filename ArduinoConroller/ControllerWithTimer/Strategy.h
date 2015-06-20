@@ -21,8 +21,8 @@ class Strategy {
   }
   
   void Process() {
-    bool leftTurnFound = lineSensorValues_[0] > 200;
-    bool rightTurnFound = lineSensorValues_[7] > 200;
+    bool leftTurnFound = lineSensorValues_[0] > 120;
+    bool rightTurnFound = lineSensorValues_[7] > 120;
     float position = lineSensor.Position() / 1000.0;
     Serial.print("[Odo:");
     Serial.print(quadratureEncoder.Counter());
@@ -40,11 +40,11 @@ class Strategy {
           state = FIND_LINE_END;
         } else { // Do PID.
           if (position < 3.0) {
-            a_speed_ -= 10;
-            b_speed_ += 10;
+            a_speed_ -= 20;
+            b_speed_ += 20;
           } else if (position > 4.0) {
-            a_speed_ += 10;
-            b_speed_ -= 10;
+            a_speed_ += 20;
+            b_speed_ -= 20;
           }
           
           if (a_speed_ < 0) a_speed_ = 0;

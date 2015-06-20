@@ -95,8 +95,12 @@ class Motor {
     pauseTimer4();
     speed_a_ = 0;
     speed_b_ = 0;
-    digitalWrite(SPEED_A, LOW);
-    digitalWrite(SPEED_B, LOW);
+    analogWrite(SPEED_A, 127);
+    analogWrite(SPEED_B, 127);
+    digitalWrite(I4, HIGH); // Motor B stop.
+    digitalWrite(I3, HIGH);
+    digitalWrite(I2, HIGH);  // Motor A stop.
+    digitalWrite(I1, HIGH);
     motor_busy_ = false;
   }
 
