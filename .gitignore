@@ -68,3 +68,7 @@ CMakeLists.txt
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Flash images #
+################
+.img
