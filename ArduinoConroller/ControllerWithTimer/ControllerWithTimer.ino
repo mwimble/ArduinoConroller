@@ -130,7 +130,11 @@ void loop() {
       Serial.print(" ");
     }
     
-    Serial.print("R, YAW: ");
+    Serial.print("R, A: ");
+    Serial.print(Motor::SpeedA());
+    Serial.print(", B: ");
+    Serial.print(Motor::SpeedB());
+    Serial.print(", YAW: ");
     Serial.println(sensorStick.Heading());
 
     strategy.Process();

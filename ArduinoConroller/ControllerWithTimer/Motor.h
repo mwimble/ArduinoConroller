@@ -46,6 +46,9 @@ class Motor {
     pinMode(SPEED_B, OUTPUT);
   }
   
+  static int SpeedA() { return speed_a_; }
+  static int SpeedB() { return speed_a_; }
+  
   static void Enqueue(Command& command) {
     cli();
     commands_.push(command);

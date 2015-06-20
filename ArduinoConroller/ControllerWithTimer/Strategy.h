@@ -40,13 +40,19 @@ class Strategy {
           state = FIND_LINE_END;
         } else { // Do PID.
           if (position < 3.0) {
-            a_speed_ += 10;
-            b_speed_ -= 10;
-          } else if (position > 4.0) {
             a_speed_ -= 10;
             b_speed_ += 10;
+          } else if (position > 4.0) {
+            a_speed_ += 10;
+            b_speed_ -= 10;
           }
+          
+          if (a_speed_ < 0) a_speed_ = 0;
+          if (b_speed_ < 0) b_speed_ = 0;
+          if (a_speed_ > 127) a_speed_ = 127;
+          if (b_speed_ > 127) b_speed_ = 127;
 
+          /*
           if ((a_speed_ > 250) || (b_speed_ < 0)) {
             motor.Stop();
             Serial.print("Correction out of range. Position: ");
@@ -65,6 +71,7 @@ class Strategy {
             Serial.println(b_speed_);
             motor.Forward(a_speed_, b_speed_);
           }
+          */
         }
                     
         break;
