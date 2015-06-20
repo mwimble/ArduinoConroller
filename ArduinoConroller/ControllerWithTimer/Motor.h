@@ -155,8 +155,8 @@ class Motor {
 };
 
 bool Motor::motor_busy_ = false;
-int Motor::speed_a_ = 127;
-int Motor::speed_b_ = 127;  
+int Motor::speed_a_ = 64;
+int Motor::speed_b_ = 64;  
 QueueList<Motor::Command> Motor::commands_;
 
 ISR(timer4Event) {

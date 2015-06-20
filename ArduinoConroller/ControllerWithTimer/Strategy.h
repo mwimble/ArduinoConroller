@@ -46,41 +46,27 @@ class Strategy {
           state_ = FIND_LINE_END;
         } else { // Do PID.
           if (position < 3.0) {
-            a_speed_ -= 20;
-            b_speed_ += 20;
+            a_speed_ -= 10;
+            b_speed_ += 10;
           } else if (position > 4.0) {
-            a_speed_ += 20;
-            b_speed_ -= 20;
+            a_speed_ += 10;
+            b_speed_ -= 10;
           }
           
+          Serial.print(">>> Did PID, position: ");
+          Serial.print(position);
+          Serial.print(", new a_speed_: ");
+          Serial.print(a_speed_);
+          Serial.print(", new b_speed_: ");
+          Serial.println(b_speed_);
           if (a_speed_ < 0) a_speed_ = 0;
           if (b_speed_ < 0) b_speed_ = 0;
           if (a_speed_ > 127) a_speed_ = 127;
           if (b_speed_ > 127) b_speed_ = 127;
-
-          /*
-          if ((a_speed_ > 250) || (b_speed_ < 0)) {
-            Motor::Stop();
-            Serial.print("Correction out of range. Position: ");
-            Serial.print(position);
-            Serial.print(", a_speed: ");
-            Serial.print(a_speed_);
-            Serial.print(", b_speed: ");
-            Serial.println(b_speed_);
-            state_ = STOP;
-          } else {
-            Serial.print("... ... PID. Position: ");
-            Serial.print(position);
-            Serial.print(", a_speed: ");
-            Serial.print(a_speed_);
-            Serial.print(", b_speed: ");
-            Serial.println(b_speed_);
-            Motor::Forward(a_speed_, b_speed_);
-          }
-          */
-        }
                     
-        Motor::Forward(a_speed_, b_speed_);
+          Motor::Forward(a_speed_, b_speed_);
+        }
+
         break;
         
       case FIND_LINE_END:
