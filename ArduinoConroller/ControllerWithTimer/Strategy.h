@@ -15,7 +15,9 @@ class Strategy {
     FOUND_END,
     STOP,
   };
-    
+  
+  static const char* kSTATE_NAMES[4];
+  
   Strategy() {
   }
   
@@ -33,10 +35,10 @@ class Strategy {
     Serial.print(" [Odo:");
     Serial.print(quadratureEncoder.Counter());
     Serial.print("] State: ");
-    Serial.print(state_);
+    Serial.print(kSTATE_NAMES[state_]);
     Serial.print(", Position: ");
     Serial.print(position);
-    Serial.print(leftTurnFound ? "  *L" : "   L");
+    Serial.print(leftTurnFound ? "  *L " : "   L ");
     for (int i = 0; i < 8; i++) {
       Serial.print(lineSensorValues_[i]);
       Serial.print(" ");
@@ -64,50 +66,29 @@ class Strategy {
     
     switch (state_) {
       case FOLLOW_LINE:
-        Serial.println("+++ FOLLOW_LINE");
         if (leftTurnFound || rightTurnFound) {
           lineStartOdo_ = quadratureEncoder.Counter();
+          lineEndOdo_ = lineStartOdo_;
           state_ = FIND_LINE_END;
-          Dump("+++ FOLLOW_LINE FOUND LINE START");
-        } else { // Do PID.
-        /*
-          if (position < 3.0) {
-            a_speed_ = a_speed_ - 10;
-            b_speed_ = b_speed_ + 10;
-          } else if (position > 4.0) {
-            a_speed_ = a_speed_ + 10;
-            b_speed_ = b_speed_ - 10;
-          }
-          
-          if (a_speed_ < 35) a_speed_ = 35;
-          if (b_speed_ < 35) b_speed_ = 35;
-          if (a_speed_ > 127) a_speed_ = 127;
-          if (b_speed_ > 127) b_speed_ = 127;
-                    
-          Serial.print(">>> Did PID, position: ");
-          Serial.print(position);
-          Serial.print(", new a_speed_: ");
-          Serial.print(a_speed_);
-          Serial.print(", new b_speed_: ");
-          Serial.println(b_speed_);
-          
-          Motor::Forward(a_speed_, b_speed_);
-          */
+          //Dump("+++ FOLLOW_LINE FOUND LINE START");
+        } else {
           if (position < 3.0) {
             while (position < 3.4) {
-              Motor::Stop();
-              delay(200);
               Motor::Left(kSLOW_SPEED, kSLOW_SPEED);
-              delay(200);
-              Dump("--- correcting with left turn");
+              delay(50);
+              Motor::Stop();
+              delay(50);
+              position = (lineSensor.Position() * 1.0) / 1000.0;
+              //Dump("--- correcting with left turn");
             }            
           } else if (position > 4.0) {
             while (position > 3.4) {
-              Motor::Stop();
-              delay(200);
               Motor::Right(kSLOW_SPEED, kSLOW_SPEED);
-              delay(200);
-              Dump("--- correcting with right turn");
+              delay(50);
+              Motor::Stop();
+              delay(50);
+               position = (lineSensor.Position() * 1.0) / 1000.0;
+              //Dump("--- correcting with right turn");
             }            
           }
           
@@ -120,10 +101,10 @@ class Strategy {
         lineEndOdo_ = quadratureEncoder.Counter();
         if (quadratureEncoder.Counter() > (lineStartOdo_ + 700)) {
           state_ = FOUND_END;
-          Motor::Stop();
+          Dump("+++ FIND_LINE_END FOUND LINE END BY MAX DISTANCE");
         } else if (!leftTurnFound && !rightTurnFound) {
           state_ = FOUND_END; //#####
-          Dump("+++ FOLLOW_LINE FOUND LINE END BY IR");
+          Dump("+++ FIND_LINE_END FOUND LINE END BY IR");
         }
         
         break;
@@ -161,5 +142,12 @@ long Strategy::lineEndOdo_;
 long Strategy::lineStartOdo_;
 Strategy::TState Strategy::state_ = FOLLOW_LINE;
 
+const char* Strategy::kSTATE_NAMES[4] = {
+  "FOLLOW_LINE",
+  "FINE_LINE_END",
+  "FOUND_END",
+  "STOP"
+};
+    
 #endif
 

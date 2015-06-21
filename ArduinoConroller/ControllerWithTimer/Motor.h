@@ -105,7 +105,7 @@ class Motor {
   }
 
   static void Forward(int speed_a, int speed_b) {
-    Serial.println(">> FORWARD");
+    //Serial.println(">> FORWARD");
     speed_a_ = speed_a;
     speed_b_ = speed_b;
     analogWrite(SPEED_A, speed_a_);
@@ -117,7 +117,7 @@ class Motor {
   }
   
   static void Backward(int speed_a, int speed_b) {
-    Serial.println(">> BACKWARD");
+    //Serial.println(">> BACKWARD");
     speed_a_ = speed_a;
     speed_b_ = speed_b;
     analogWrite(SPEED_A, speed_a_);
@@ -129,7 +129,7 @@ class Motor {
   }
   
   static void Left(int speed_a, int speed_b) {
-    Serial.println(">> LEFT");
+    //Serial.println(">> LEFT");
     speed_a_ = speed_a;
     speed_b_ = speed_b;
     analogWrite(SPEED_A, speed_a_);
@@ -141,7 +141,7 @@ class Motor {
   }
   
   static void Right(int speed_a, int speed_b) {
-    Serial.println(">> RIGHT");
+    //Serial.println(">> RIGHT");
     speed_a_ = speed_a;
     speed_b_ = speed_b;
     analogWrite(SPEED_A, speed_a_);

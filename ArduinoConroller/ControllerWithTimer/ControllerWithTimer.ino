@@ -121,9 +121,10 @@ void setup() {
 void loop() {
   int oldOdo = QuadratureEncoder::Counter();
   while ((Strategy::State() != Strategy::STOP) || (oldOdo != QuadratureEncoder::Counter())) {
-    Strategy::Dump("-loop");
+    oldOdo = QuadratureEncoder::Counter();
+    //Strategy::Dump("-loop");
     Strategy::Process();
-    delay(20);
-    if (Strategy::State() == Strategy::STOP) { delay(200); }
+    //delay(20);
+    if (Strategy::State() == Strategy::STOP) { delay(20); }
   }
 }
