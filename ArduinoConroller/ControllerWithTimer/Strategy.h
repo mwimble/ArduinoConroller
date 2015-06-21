@@ -2,8 +2,9 @@
 #define __STRAGEGY_H
 
 extern LineSensor lineSensor;
-extern QuadratureEncoder quadratureEncoder;
 extern Motor motor;
+extern QuadratureEncoder quadratureEncoder;
+extern SensorStick sensorStick;
 
 class Strategy {
   public:
@@ -24,78 +25,117 @@ class Strategy {
     Motor::Forward(a_speed_, b_speed_);
   }
   
-  void Process() {
+  static void Dump(char* message) {
     bool leftTurnFound = lineSensorValues_[0] > 120;
     bool rightTurnFound = lineSensorValues_[7] > 120;
-    float position = lineSensor.Position() / 1000.0;
-    Serial.print("[Odo:");
+    float position = (lineSensor.Position() * 1.0) / 1000.0;
+    Serial.print(message);
+    Serial.print(" [Odo:");
     Serial.print(quadratureEncoder.Counter());
-    Serial.print("] ");
+    Serial.print("] State: ");
+    Serial.print(state_);
+    Serial.print(", Position: ");
+    Serial.print(position);
+    Serial.print(leftTurnFound ? "  *L" : "   L");
+    for (int i = 0; i < 8; i++) {
+      Serial.print(lineSensorValues_[i]);
+      Serial.print(" ");
+    }
+    
+    Serial.print(rightTurnFound ? "R*, A: " : "R , A: ");
+    Serial.print(Motor::SpeedA());
+    Serial.print(", B: ");
+    Serial.print(Motor::SpeedB());
+    Serial.print(", YAW: ");
+    Serial.print(sensorStick.Heading());
+    Serial.print(", s: ");
+    Serial.print(lineStartOdo_);
+    Serial.print(", e: ");
+    Serial.print(lineEndOdo_);
+    Serial.print(", len: ");
+    Serial.println(lineEndOdo_ - lineStartOdo_);
+  }
+  
+  static void Process() {
+    const int kSLOW_SPEED = 64;
+    bool leftTurnFound = lineSensorValues_[0] > 120;
+    bool rightTurnFound = lineSensorValues_[7] > 120;
+    float position = (lineSensor.Position() * 1.0) / 1000.0;
     
     switch (state_) {
       case FOLLOW_LINE:
         Serial.println("+++ FOLLOW_LINE");
         if (leftTurnFound || rightTurnFound) {
           lineStartOdo_ = quadratureEncoder.Counter();
-          Serial.print(">>> FOUND start of crossing, odo: ");
-          Serial.print(lineStartOdo_);
-          Serial.print(", left: ");
-          Serial.print(leftTurnFound);
-          Serial.print(", right: ");
-          Serial.println(rightTurnFound);
           state_ = FIND_LINE_END;
+          Dump("+++ FOLLOW_LINE FOUND LINE START");
         } else { // Do PID.
+        /*
           if (position < 3.0) {
-            a_speed_ -= 10;
-            b_speed_ += 10;
+            a_speed_ = a_speed_ - 10;
+            b_speed_ = b_speed_ + 10;
           } else if (position > 4.0) {
-            a_speed_ += 10;
-            b_speed_ -= 10;
+            a_speed_ = a_speed_ + 10;
+            b_speed_ = b_speed_ - 10;
           }
           
+          if (a_speed_ < 35) a_speed_ = 35;
+          if (b_speed_ < 35) b_speed_ = 35;
+          if (a_speed_ > 127) a_speed_ = 127;
+          if (b_speed_ > 127) b_speed_ = 127;
+                    
           Serial.print(">>> Did PID, position: ");
           Serial.print(position);
           Serial.print(", new a_speed_: ");
           Serial.print(a_speed_);
           Serial.print(", new b_speed_: ");
           Serial.println(b_speed_);
-          if (a_speed_ < 0) a_speed_ = 0;
-          if (b_speed_ < 0) b_speed_ = 0;
-          if (a_speed_ > 127) a_speed_ = 127;
-          if (b_speed_ > 127) b_speed_ = 127;
-                    
+          
           Motor::Forward(a_speed_, b_speed_);
+          */
+          if (position < 3.0) {
+            while (position < 3.4) {
+              Motor::Stop();
+              delay(200);
+              Motor::Left(kSLOW_SPEED, kSLOW_SPEED);
+              delay(200);
+              Dump("--- correcting with left turn");
+            }            
+          } else if (position > 4.0) {
+            while (position > 3.4) {
+              Motor::Stop();
+              delay(200);
+              Motor::Right(kSLOW_SPEED, kSLOW_SPEED);
+              delay(200);
+              Dump("--- correcting with right turn");
+            }            
+          }
+          
+          Motor::Forward(64, 64);
         }
 
         break;
         
       case FIND_LINE_END:
-        Serial.println("+++ FOLLOW_LINE_END");
+        lineEndOdo_ = quadratureEncoder.Counter();
         if (quadratureEncoder.Counter() > (lineStartOdo_ + 700)) {
           state_ = FOUND_END;
           Motor::Stop();
         } else if (!leftTurnFound && !rightTurnFound) {
-          lineEndOdo_ = quadratureEncoder.Counter();
-          Serial.print(">>> Found line end Odo:");
-          Serial.print(lineEndOdo_);
-          Serial.print(", width: ");
-          Serial.print(lineEndOdo_ - lineStartOdo_);
-          Serial.print(" Odos or ");
-          Serial.print((lineEndOdo_ - lineStartOdo_) / 0.0067);
-          Serial.println(" IN");
           state_ = FOUND_END; //#####
+          Dump("+++ FOLLOW_LINE FOUND LINE END BY IR");
         }
         
         break;
         
       case FOUND_END:
-        Serial.println("+++ FOUND_END");
+        Dump("+++ FOUND_END");
         Motor::Stop();
         state_ = STOP;
         break;
         
       case STOP:
-        Serial.println("+++ STOP");
+        Dump("+++ STOP");
         Motor::Stop();
         break;
     }

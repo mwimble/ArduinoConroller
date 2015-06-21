@@ -119,25 +119,11 @@ void setup() {
 
 
 void loop() {
-  while(Strategy::State() != Strategy::STOP) {
-    Serial.print("*[Odo:");
-    Serial.print(QuadratureEncoder::Counter());
-    Serial.print("] Position: ");
-    Serial.print(linePosition);
-    Serial.print("   L ");
-    for (int i = 0; i < 8; i++) {
-      Serial.print(lineSensorValues[i]);
-      Serial.print(" ");
-    }
-    
-    Serial.print("R, A: ");
-    Serial.print(Motor::SpeedA());
-    Serial.print(", B: ");
-    Serial.print(Motor::SpeedB());
-    Serial.print(", YAW: ");
-    Serial.println(sensorStick.Heading());
-
-    strategy.Process();
-    delay(20);    
+  int oldOdo = QuadratureEncoder::Counter();
+  while ((Strategy::State() != Strategy::STOP) || (oldOdo != QuadratureEncoder::Counter())) {
+    Strategy::Dump("-loop");
+    Strategy::Process();
+    delay(20);
+    if (Strategy::State() == Strategy::STOP) { delay(200); }
   }
 }
