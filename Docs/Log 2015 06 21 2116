@@ -1,0 +1,60 @@
+�Start
+Enter key to start
+3874.95 :: --- FOLLOW_LINE on course [Odo:0] State: FOLLOW_LINE, Position: 3.34   L 226 226 157 1000 1000 226 89 157 R  , YAW: 273.99, s: 0, e: 0, len: 0
+3894.38 :: --- FOLLOW_LINE on course [Odo:0] State: FOLLOW_LINE, Position: 3.43   L 173 173 173 1000 1000 173 94 173 R  , YAW: 270.23, s: 0, e: 0, len: 0
+3920.71 :: --- FOLLOW_LINE on course [Odo:1] State: FOLLOW_LINE, Position: 3.35   L 236 152 152 1000 1000 152 89 152 R  , YAW: 274.54, s: 0, e: 0, len: 0
+3947.09 :: --- FOLLOW_LINE on course [Odo:6] State: FOLLOW_LINE, Position: 3.35   L 236 168 168 1000 1000 168 89 168 R  , YAW: 270.70, s: 0, e: 0, len: 0
+3973.30 :: --- FOLLOW_LINE on course [Odo:16] State: FOLLOW_LINE, Position: 3.54   L 168 94 94 1000 1000 168 94 168 R  , YAW: 270.48, s: 0, e: 0, len: 0
+3999.63 :: --- FOLLOW_LINE on course [Odo:28] State: FOLLOW_LINE, Position: 3.35   L 236 152 152 1000 1000 152 89 152 R  , YAW: 270.47, s: 0, e: 0, len: 0
+4026.11 :: --- FOLLOW_LINE on course [Odo:43] State: FOLLOW_LINE, Position: 3.44   L 152 152 152 1000 1000 152 89 152 R  , YAW: 271.36, s: 0, e: 0, len: 0
+4052.70 :: --- FOLLOW_LINE on course [Odo:56] State: FOLLOW_LINE, Position: 3.33   L 163 163 163 1000 1000 163 84 84 R  , YAW: 270.45, s: 0, e: 0, len: 0
+4079.00 :: --- FOLLOW_LINE on course [Odo:75] State: FOLLOW_LINE, Position: 3.33   L 168 168 168 1000 1000 168 89 89 R  , YAW: 270.91, s: 0, e: 0, len: 0
+4105.30 :: --- FOLLOW_LINE on course [Odo:93] State: FOLLOW_LINE, Position: 3.28   L 178 178 100 1000 1000 178 26 100 R  , YAW: 271.12, s: 0, e: 0, len: 0
+4131.83 :: --- FOLLOW_LINE on course [Odo:110] State: FOLLOW_LINE, Position: 3.20   L 200 200 110 1000 1000 110 26 110 R  , YAW: 270.45, s: 0, e: 0, len: 0
+4158.55 :: --- FOLLOW_LINE on course [Odo:130] State: FOLLOW_LINE, Position: 3.21   L 178 178 89 1000 1000 89 21 89 R  , YAW: 270.45, s: 0, e: 0, len: 0
+4184.79 :: --- FOLLOW_LINE on course [Odo:153] State: FOLLOW_LINE, Position: 3.22   L 173 173 89 1000 1000 89 26 89 R  , YAW: 270.44, s: 0, e: 0, len: 0
+4210.82 :: --- FOLLOW_LINE on course [Odo:174] State: FOLLOW_LINE, Position: 3.09   L 173 173 94 1000 1000 94 26 26 R  , YAW: 270.00, s: 0, e: 0, len: 0
+4237.04 :: --- FOLLOW_LINE on course [Odo:205] State: FOLLOW_LINE, Position: 3.09   L 173 89 89 1000 1000 21 21 21 R  , YAW: 271.78, s: 0, e: 0, len: 0
+4262.98 :: --- FOLLOW_LINE on course [Odo:227] State: FOLLOW_LINE, Position: 3.14   L 136 136 42 1000 1000 42 0 42 R  , YAW: 270.00, s: 0, e: 0, len: 0
+4289.09 :: --- FOLLOW_LINE on course [Odo:253] State: FOLLOW_LINE, Position: 3.19   L 115 115 26 1000 1000 26 0 26 R  , YAW: 269.76, s: 0, e: 0, len: 0
+4315.05 :: --- FOLLOW_LINE on course [Odo:277] State: FOLLOW_LINE, Position: 3.50   L 26 26 26 1000 1000 26 0 26 R  , YAW: 269.78, s: 0, e: 0, len: 0
+4340.80 :: --- FOLLOW_LINE on course [Odo:304] State: FOLLOW_LINE, Position: 3.50   L 26 26 0 1000 1000 0 0 26 R  , YAW: 270.45, s: 0, e: 0, len: 0
+4366.12 :: --- FOLLOW_LINE on course [Odo:333] State: FOLLOW_LINE, Position: 3.50   L 0 0 0 963 963 0 0 31 R  , YAW: 269.53, s: 0, e: 0, len: 0
+4390.77 :: --- FOLLOW_LINE on course [Odo:358] State: FOLLOW_LINE, Position: 3.64   L 0 0 0 736 805 0 0 52 R  , YAW: 270.22, s: 0, e: 0, len: 0
+4415.35 :: --- FOLLOW_LINE on course [Odo:392] State: FOLLOW_LINE, Position: 3.58   L 0 0 0 594 821 0 0 31 R  , YAW: 270.00, s: 0, e: 0, len: 0
+4440.08 :: --- FOLLOW_LINE on course [Odo:420] State: FOLLOW_LINE, Position: 3.60   L 0 0 0 505 752 0 0 31 R  , YAW: 269.78, s: 0, e: 0, len: 0
+4464.73 :: --- FOLLOW_LINE on course [Odo:448] State: FOLLOW_LINE, Position: 3.85   L 0 0 0 557 821 0 31 110 R  , YAW: 269.78, s: 0, e: 0, len: 0
+4489.71 :: --- FOLLOW_LINE on course [Odo:477] State: FOLLOW_LINE, Position: 3.82   L 0 0 0 573 884 26 26 100 R  , YAW: 269.55, s: 0, e: 0, len: 0
+4514.91 :: --- FOLLOW_LINE on course [Odo:501] State: FOLLOW_LINE, Position: 3.82   L 0 0 0 578 963 26 26 94 R  , YAW: 269.53, s: 0, e: 0, len: 0
+4539.87 :: --- FOLLOW_LINE on course [Odo:525] State: FOLLOW_LINE, Position: 3.84   L 0 0 0 547 878 26 26 100 R  , YAW: 271.33, s: 0, e: 0, len: 0
+4564.37 :: --- FOLLOW_LINE on course [Odo:551] State: FOLLOW_LINE, Position: 3.68   L 0 0 0 1000 1000 36 36 110 R  , YAW: 269.34, s: 0, e: 0, len: 0
+4590.53 :: --- FOLLOW_LINE on course [Odo:573] State: FOLLOW_LINE, Position: 3.75   L 0 0 0 815 742 36 36 131 R  , YAW: 269.34, s: 0, e: 0, len: 0
+4615.70 :: --- FOLLOW_LINE on course [Odo:599] State: FOLLOW_LINE, Position: 3.66   L 0 0 0 815 673 26 26 94 R  , YAW: 269.34, s: 0, e: 0, len: 0
+4640.68 :: --- FOLLOW_LINE on course [Odo:624] State: FOLLOW_LINE, Position: 3.61   L 0 0 0 889 505 26 26 100 R  , YAW: 269.10, s: 0, e: 0, len: 0
+4665.84 :: --- FOLLOW_LINE on course [Odo:648] State: FOLLOW_LINE, Position: 3.28   L 0 0 0 889 347 31 0 31 R  , YAW: 269.30, s: 0, e: 0, len: 0
+4690.70 :: --- FOLLOW_LINE on course [Odo:678] State: FOLLOW_LINE, Position: 3.23   L 0 0 0 826 252 0 0 31 R  , YAW: 270.44, s: 0, e: 0, len: 0
+4715.32 :: --- FOLLOW_LINE on course [Odo:704] State: FOLLOW_LINE, Position: 3.12   L 0 0 0 747 105 0 0 0 R  , YAW: 269.56, s: 0, e: 0, len: 0
+4739.84 :: --- FOLLOW_LINE on course [Odo:729] State: FOLLOW_LINE, Position: 3.14   L 0 0 0 652 105 0 0 0 R  , YAW: 269.34, s: 0, e: 0, len: 0
+4764.28 :: --- FOLLOW_LINE on course [Odo:749] State: FOLLOW_LINE, Position: 3.00   L 0 0 0 663 31 0 0 0 R  , YAW: 269.56, s: 0, e: 0, len: 0
+4788.54 :: --- FOLLOW_LINE on course [Odo:775] State: FOLLOW_LINE, Position: 3.00   L 0 0 0 647 31 0 0 0 R  , YAW: 270.00, s: 0, e: 0, len: 0
+4812.88 :: --- FOLLOW_LINE on course [Odo:798] State: FOLLOW_LINE, Position: 3.00   L 0 31 31 568 0 0 0 0 R  , YAW: 269.78, s: 0, e: 0, len: 0
+4837.40 :: --- FOLLOW_LINE on course [Odo:825] State: FOLLOW_LINE, Position: 3.00   L 0 0 31 594 0 0 0 0 R  , YAW: 270.22, s: 0, e: 0, len: 0
+4961.75 :: --- FOLLOW_LINE correcting with left turn [Odo:931] State: FOLLOW_LINE, Position: 2.87   L 0 0 105 673 0 0 0 0 R  , YAW: 270.00, s: 0, e: 0, len: 0
+4982.02 :: --- FOLLOW_LINE on course [Odo:939] State: FOLLOW_LINE, Position: 3.28   L 168 168 168 1000 394 168 89 168 R  , YAW: 272.24, s: 0, e: 0, len: 0
+5008.57 :: --- FOLLOW_LINE on course [Odo:951] State: FOLLOW_LINE, Position: 3.24   L 178 178 178 1000 405 100 100 178 R  , YAW: 267.76, s: 0, e: 0, len: 0
+5035.23 :: --- FOLLOW_LINE on course [Odo:965] State: FOLLOW_LINE, Position: 3.26   L 168 84 168 1000 263 84 84 168 R  , YAW: 269.55, s: 0, e: 0, len: 0
+5061.39 :: --- FOLLOW_LINE on course [Odo:980] State: FOLLOW_LINE, Position: 3.09   L 168 168 310 1000 236 89 89 168 R  , YAW: 269.11, s: 0, e: 0, len: 0
+5087.70 :: +++ FOLLOW_LINE FOUND LINE START [Odo:1005] State: FINE_LINE_END, Position: 2.74  *L 373 373 373 1000 152 152 152 152 R  , YAW: 267.32, s: 1001, e: 1001, len: 0
+5239.12 :: +++ FIND_LINE_END FOUND LINE END BY IR [Odo:1135] State: FOUND_END, Position: 2.50   L 168 0 168 1000 26 0 0 26 R  , YAW: 269.53, s: 1001, e: 1134, len: 133
+5260.81 :: +++ FOUND_END [Odo:1159] State: FOUND_END, Position: 2.90   L 0 0 110 1000 42 0 0 0 R  , YAW: 268.67, s: 1001, e: 1134, len: 133
+==== ==== STATS
+loopCount: 80, avg loop duration: 17644.75
+usec at start: 3869600, at end: 5281180, duration: 1411580
+lineSensor sumLineSensorRead: 159756, avg read duration: 1996.95
+sensorStick sumSensorStickRead: 132456,  avg read dration: 1655.70
+5324.50 :: Final dump [Odo:1229] State: STOP, Position: 2.90   L 0 0 110 1000 42 0 0 0 R  , YAW: 268.67, s: 1001, e: 1134, len: 133
+5370.69 :: +++ STOP [Odo:1259] State: STOP, Position: 2.85   L 0 31 173 1000 31 0 0 0 R  , YAW: 269.05, s: 1001, e: 1134, len: 133
+5406.10 :: +++ STOP [Odo:1275] State: STOP, Position: 2.85   L 0 31 173 1000 31 0 0 0 R  , YAW: 269.33, s: 1001, e: 1134, len: 133
+5441.49 :: +++ STOP [Odo:1288] State: STOP, Position: 2.70   L 0 100 184 1000 31 0 0 0 R  , YAW: 268.89, s: 1001, e: 1134, len: 133
+5477.07 :: +++ STOP [Odo:1295] State: STOP, Position: 2.71   L 31 100 173 1000 31 0 0 0 R  , YAW: 269.55, s: 1001, e: 1134, len: 133
+5512.70 :: +++ STOP [Odo:1297] State: STOP, Position: 2.67   L 31 100 242 1000 31 0 0 0 R  , YAW: 270.00, s: 1001, e: 1134, len: 133

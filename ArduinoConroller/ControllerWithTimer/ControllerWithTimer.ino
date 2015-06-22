@@ -15,56 +15,18 @@
 #include "SensorStick.h"
 #include "Strategy.h"
 
+const bool DEBUG = false;
+const unsigned long DEBUG_TIME_USEC = 60000000;
 
-// ThreadController that will controll all threads
-ThreadController controll = ThreadController();
+extern unsigned long myMicros();
+unsigned long microStart = myMicros();
 
-// IMU
-//Thread IMUThread = Thread();
-//IMU imu = IMU();
-
-// SensorStick.
-Thread sensorStickThread = Thread();
-SensorStick sensorStick = SensorStick();
-void sensorStickThreadCallback() {
-  SensorStick::Process();
-}
-
-// Line Sensor.
-Thread lineSensorThread = Thread();
 LineSensor lineSensor = LineSensor();
-unsigned int linePosition;
-const LineSensor::TSensorArray& lineSensorValues = lineSensor.SensorValues();
-
-// Thread callback for LineSensor
-void lineSensorThreadCallback() {
-    lineSensor.Read();
-    linePosition = lineSensor.Position();
-}
-
-// Motor.
-Thread motorThread = Thread();
 Motor motor = Motor();
-void motorThreadCallback() {
-//  Serial.println("motorThreadCallback");
-//  Motor::Process();
-}
-
-// Quadrature Encoder.
 QuadratureEncoder quadratureEncoder = QuadratureEncoder();
-
-// Thread callback for IMU
-//void IMUCallback() {
-//  imu.processStream();
-//}
-
+SensorStick sensorStick = SensorStick();
 Strategy strategy = Strategy();
 	
-// This is the callback for the Timer
-ISR(timer5Event) {
-  controll.run();
-}
-
 void waitSerial() {
   while (!Serial.available());
   delay(10);
@@ -77,54 +39,74 @@ void setup() {
   Serial.println("Enter key to start");
   waitSerial();  
 
-  lineSensor.Calibrate();
-
-  lineSensorThread.onRun(lineSensorThreadCallback);
-  lineSensorThread.setInterval(5);
-  
-  motorThread.onRun(motorThreadCallback);
-  motorThread.setInterval(10);
-
-  //IMUThread.onRun(IMUCallback);
-  //IMUThread.setInterval(1);
-  sensorStickThread.onRun(sensorStickThreadCallback);
-  sensorStickThread.setInterval(2);
-
-
-  controll.add(&lineSensorThread); // & to pass the pointer to it
-  //controll.add(&IMUThread);
-  controll.add(&sensorStickThread);
-  controll.add(&motorThread);
-
-  startTimer5(20); //#####
-  
-  Motor::Command bw = {Motor::BACKWARD, 127, 127};
-  Motor::Command fw = {Motor::FORWARD, 127, 127};
-  Motor::Command left = {Motor::LEFT_TURN, 127, 127};
-  Motor::Command right = {Motor::RIGHT_TURN, 127, 127};
-  Motor::Command mstop = {Motor::STOP, 0, 0};
-  /*
-  motor.Enqueue(mstop);
-  motor.Enqueue(fw);
-  motor.Enqueue(left);  
-  motor.Enqueue(bw);
-  motor.Enqueue(left);
-  motor.Enqueue(fw);
-  motor.Enqueue(right);
-  motor.Enqueue(fw);
-  */
-  
+  LineSensor::Calibrate();
+  microStart = myMicros();
   strategy.Initialize();
 }
 
+unsigned long loopCount = 0;
+unsigned long sumLineSensorRead = 0;
+unsigned long sumSensorStickRead = 0;
 
+unsigned int linePosition;
+
+bool statsReported = false;
 void loop() {
   int oldOdo = QuadratureEncoder::Counter();
   while ((Strategy::State() != Strategy::STOP) || (oldOdo != QuadratureEncoder::Counter())) {
+    unsigned long s = myMicros();
+    LineSensor::Read();
+    sumLineSensorRead += myMicros() - s;
+    linePosition = LineSensor::Position();
+  
+    s = myMicros();
+    SensorStick::Process();
+    sumSensorStickRead += myMicros() - s;
+    
     oldOdo = QuadratureEncoder::Counter();
     //Strategy::Dump("-loop");
-    Strategy::Process();
+    if (!DEBUG) {
+      Strategy::Process();
+    } else {
+      if ((myMicros() - microStart) > DEBUG_TIME_USEC) Strategy::Stop();
+      Strategy::Dump("DEBUG");
+    }
     //delay(20);
-    if (Strategy::State() == Strategy::STOP) { delay(20); }
+    if (Strategy::State() == Strategy::STOP) {
+      if (!statsReported) {
+        unsigned long microEnd = myMicros();
+        unsigned long duration = microEnd - microStart;
+        Serial.println("==== ==== STATS");
+        
+        Serial.print("loopCount: ");
+        Serial.print(loopCount);
+        Serial.print(", avg loop duration: ");
+        Serial.println((duration * 1.0) / (loopCount * 1.0));
+        
+        Serial.print("usec at start: ");
+        Serial.print(microStart);
+        Serial.print(", at end: ");
+        Serial.print(microEnd);
+        Serial.print(", duration: ");
+        Serial.println(duration);
+        
+        Serial.print("lineSensor sumLineSensorRead: ");
+        Serial.print(sumLineSensorRead);
+        Serial.print(", avg read duration: ");
+        Serial.println((sumLineSensorRead * 1.0) / (loopCount * 1.0));
+        
+        Serial.print("sensorStick sumSensorStickRead: ");
+        Serial.print(sumSensorStickRead);
+        Serial.print(",  avg read dration: ");
+        Serial.println((sumSensorStickRead * 1.0) / (loopCount * 1.0));
+        
+        Strategy::Dump("Final dump");
+        statsReported = true;
+      }
+      
+      delay(20);
+    }
+
+      loopCount++;
   }
 }

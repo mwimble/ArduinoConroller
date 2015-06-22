@@ -1,13 +1,17 @@
 #ifndef __STRAGEGY_H
 #define __STRAGEGY_H
 
+extern unsigned long myMicros();
 extern LineSensor lineSensor;
+extern unsigned int linePosition;
 extern Motor motor;
 extern QuadratureEncoder quadratureEncoder;
 extern SensorStick sensorStick;
 
 class Strategy {
   public:
+  static const int kSLOW_SPEED = 64;
+  static const int kLINE_DETECTED_THRESHOLD = 300;
 
   typedef enum TState {
     FOLLOW_LINE,
@@ -24,13 +28,15 @@ class Strategy {
   void Initialize() {
     Motor::Stop();
     state_ = FOLLOW_LINE;
-    Motor::Forward(a_speed_, b_speed_);
   }
   
   static void Dump(char* message) {
-    bool leftTurnFound = lineSensorValues_[0] > 120;
-    bool rightTurnFound = lineSensorValues_[7] > 120;
-    float position = (lineSensor.Position() * 1.0) / 1000.0;
+    bool leftTurnFound = lineSensorValues_[0] > kLINE_DETECTED_THRESHOLD;
+    bool rightTurnFound = lineSensorValues_[7] > kLINE_DETECTED_THRESHOLD;
+    float position = (linePosition * 1.0) / 1000.0;
+    float ms = ((myMicros() * 1.0) - start_time_) / 1000.0;
+    Serial.print(ms);
+    Serial.print(" :: ");
     Serial.print(message);
     Serial.print(" [Odo:");
     Serial.print(quadratureEncoder.Counter());
@@ -44,10 +50,7 @@ class Strategy {
       Serial.print(" ");
     }
     
-    Serial.print(rightTurnFound ? "R*, A: " : "R , A: ");
-    Serial.print(Motor::SpeedA());
-    Serial.print(", B: ");
-    Serial.print(Motor::SpeedB());
+    Serial.print(rightTurnFound ? "R* " : "R  ");
     Serial.print(", YAW: ");
     Serial.print(sensorStick.Heading());
     Serial.print(", s: ");
@@ -58,11 +61,15 @@ class Strategy {
     Serial.println(lineEndOdo_ - lineStartOdo_);
   }
   
+  static void Stop() {
+    state_ = STOP;
+    Motor::Stop();
+  }
+  
   static void Process() {
-    const int kSLOW_SPEED = 64;
-    bool leftTurnFound = lineSensorValues_[0] > 120;
-    bool rightTurnFound = lineSensorValues_[7] > 120;
-    float position = (lineSensor.Position() * 1.0) / 1000.0;
+    bool leftTurnFound = lineSensorValues_[0] > kLINE_DETECTED_THRESHOLD;
+    bool rightTurnFound = lineSensorValues_[7] > kLINE_DETECTED_THRESHOLD;
+    float position = (linePosition * 1.0) / 1000.0;
     
     switch (state_) {
       case FOLLOW_LINE:
@@ -70,26 +77,24 @@ class Strategy {
           lineStartOdo_ = quadratureEncoder.Counter();
           lineEndOdo_ = lineStartOdo_;
           state_ = FIND_LINE_END;
-          //Dump("+++ FOLLOW_LINE FOUND LINE START");
+          Dump("+++ FOLLOW_LINE FOUND LINE START");
         } else {
           if (position < 3.0) {
-            while (position < 3.4) {
-              Motor::Left(kSLOW_SPEED, kSLOW_SPEED);
-              delay(50);
-              Motor::Stop();
-              delay(50);
-              position = (lineSensor.Position() * 1.0) / 1000.0;
-              //Dump("--- correcting with left turn");
-            }            
+            Motor::Left(kSLOW_SPEED, kSLOW_SPEED);
+            delay(50);
+            Motor::Stop();
+            delay(50);
+            position = (linePosition * 1.0) / 1000.0;
+            Dump("--- FOLLOW_LINE correcting with left turn");
           } else if (position > 4.0) {
-            while (position > 3.4) {
-              Motor::Right(kSLOW_SPEED, kSLOW_SPEED);
-              delay(50);
-              Motor::Stop();
-              delay(50);
-               position = (lineSensor.Position() * 1.0) / 1000.0;
-              //Dump("--- correcting with right turn");
-            }            
+            Motor::Right(kSLOW_SPEED, kSLOW_SPEED);
+            delay(50);
+            Motor::Stop();
+            delay(50);
+            position = (linePosition * 1.0) / 1000.0;
+            Dump("--- FOLLOW_LINE correcting with right turn");
+          } else {
+            Dump("--- FOLLOW_LINE on course");
           }
           
           Motor::Forward(64, 64);
@@ -132,15 +137,17 @@ class Strategy {
   static long lineEndOdo_;
   static long lineStartOdo_;
   static TState state_;
+  static unsigned long start_time_;
 };
 
-const LineSensor::TSensorArray& Strategy::lineSensorValues_ = lineSensor.SensorValues();
+const LineSensor::TSensorArray& Strategy::lineSensorValues_ = LineSensor::SensorValues();
 int Strategy::a_speed_ = 64;
 int Strategy::b_speed_ = 64;
 float Strategy::heading_;
 long Strategy::lineEndOdo_;
 long Strategy::lineStartOdo_;
 Strategy::TState Strategy::state_ = FOLLOW_LINE;
+unsigned long Strategy::start_time_ = myMicros();
 
 const char* Strategy::kSTATE_NAMES[4] = {
   "FOLLOW_LINE",
