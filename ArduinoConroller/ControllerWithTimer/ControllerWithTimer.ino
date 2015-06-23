@@ -1,7 +1,5 @@
 #include <QueueList.h>
 #include <QTRSensors.h>
-#include <Thread.h>
-#include <ThreadController.h>
 #include <Timer4.h>
 #include <Timer5.h>
 #include <Wire.h>
