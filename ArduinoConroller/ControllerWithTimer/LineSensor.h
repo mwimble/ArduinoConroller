@@ -9,7 +9,8 @@ class LineSensor {
   typedef unsigned int TSensorArray[NUM_SENSORS] ;
 
   private:
-  static const int TIMEOUT_USEC = 800;
+  static const int CALIBRATION_MAX = 1600;
+  static const int CALIBRATION_MIN = 200;
   static const int EMITTER_PIN = 39;
   
   static TSensorArray _sensorValues;
@@ -26,8 +27,8 @@ class LineSensor {
     qtrrc.calibrate();
     for (int i = 0; i < NUM_SENSORS; i++) {
       _sensorValues[i] = 0;
-      qtrrc.calibratedMinimumOn[i] = 40;
-      qtrrc.calibratedMaximumOn[i] = TIMEOUT_USEC;
+      qtrrc.calibratedMinimumOn[i] = CALIBRATION_MIN;
+      qtrrc.calibratedMaximumOn[i] = CALIBRATION_MAX;
     }
   }
 
@@ -50,7 +51,7 @@ unsigned int  LineSensor::_position;
 unsigned long  LineSensor::_readCount;
 QTRSensorsRC LineSensor::qtrrc((unsigned char[]) {23, 25, 27, 29, 31, 33, 35, 37},
 		                   NUM_SENSORS,
-		                   TIMEOUT_USEC,
+		                   CALIBRATION_MAX,
 		                   EMITTER_PIN);
 
 #endif

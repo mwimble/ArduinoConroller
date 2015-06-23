@@ -35,7 +35,7 @@ class SensorStick {
     heading_ = heading_ * 180.0 / M_PI;
   }
   
-  float Heading() {
+  static float Heading() {
     return heading_;
   }
   

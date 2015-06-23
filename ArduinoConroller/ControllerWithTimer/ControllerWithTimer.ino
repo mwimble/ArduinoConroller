@@ -6,8 +6,8 @@
 
 #include "HMC5883L.h"
 #include "I2Cdev.h"
-#include "IMU.h"
 #include "LineSensor.h"
+#include "Map.h"
 #include "Motor.h"
 #include "QuadratureEncoder.h"
 #include "SensorStick.h"
@@ -99,6 +99,7 @@ void loop() {
         Serial.println((sumSensorStickRead * 1.0) / (loopCount * 1.0));
         
         Strategy::Dump("Final dump");
+        Map::DumpTree(Strategy::StartMap());
         statsReported = true;
       }
       
