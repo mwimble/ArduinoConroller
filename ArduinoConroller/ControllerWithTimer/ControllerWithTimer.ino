@@ -51,7 +51,7 @@ unsigned int linePosition;
 bool statsReported = false;
 void loop() {
   int oldOdo = QuadratureEncoder::Counter();
-  while ((Strategy::State() != Strategy::STOP) || (oldOdo != QuadratureEncoder::Counter())) {
+  while ((Strategy::State() != Strategy::SOLVED) || (oldOdo != QuadratureEncoder::Counter())) {
     unsigned long s = myMicros();
     LineSensor::Read();
     sumLineSensorRead += myMicros() - s;
@@ -70,7 +70,7 @@ void loop() {
       Strategy::Dump("DEBUG");
     }
     //delay(20);
-    if (Strategy::State() == Strategy::STOP) {
+    if (Strategy::State() == Strategy::SOLVED) {
       if (!statsReported) {
         unsigned long microEnd = myMicros();
         unsigned long duration = microEnd - microStart;
@@ -101,6 +101,7 @@ void loop() {
         Strategy::Dump("Final dump");
         Map::DumpTree(Strategy::StartMap());
         statsReported = true;
+        return;
       }
       
       delay(20);

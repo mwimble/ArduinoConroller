@@ -14,9 +14,12 @@ class Strategy {
   static const int kTURN_SPEED = 80;
   static const int kLINE_DETECTED_THRESHOLD = 400;
   static const int kMAKE_TURN_DELTA_YAW = 55; // Min degrees to turn before resampling line.
+  static const int kTURN_AROUND_DELTA_YAW = 145; // Min degrees to turn before resampling line.
   static const float kINCHES_PER_ODO = 0.0068; // Inches traveled in one odometer click.
   static const long kODOS_TO_OVERSHOOT_LINE = 147 * 2; // Odos to trave beyone far edge of line before starting turn.
   static const long kODOS_TO_SAMPLE_CONTINUATION = 147; // Odos to sample past line end to look for line continuation.
+  static const long kMIN_NO_CENTER_IS_DEAD_END = 147; // Min Odos not finding a center sensor to cound as a dead end indication.
+  static const long kODO_WIDTH_OF_STOP_SYMBOL = 300;
   
   private:
     static bool CenterLineFound() {
@@ -33,6 +36,7 @@ class Strategy {
     static bool RightLineFound() {
       return line_sensor_values_[LineSensor::NUM_SENSORS - 1] >= kLINE_DETECTED_THRESHOLD;
     }
+    
 
   static const unsigned int kLEFT_LINE_SEGMENT = 0;
   static const unsigned int kCENTER_LINE_SEGMENT = 1;
@@ -56,7 +60,7 @@ class Strategy {
       segment_detection_end_samples_++;
     } else {
       // If we have crossed the line, sample only the center line segment.
-      if ((last_stopping_odo_ + kODOS_TO_SAMPLE_CONTINUATION) <= QuadratureEncoder::Counter()) {
+      if ((lineEndOdo_ + kODOS_TO_SAMPLE_CONTINUATION) <= QuadratureEncoder::Counter()) {
         if (CenterLineFound()) segment_detection_counts_[kCENTER_LINE_SEGMENT]++;
         segment_detection_center_samples_++;
       }
@@ -64,15 +68,15 @@ class Strategy {
   }
   
   static bool LeftLineSegmentFound() {
-    return segment_detection_counts_[kLEFT_LINE_SEGMENT] >= (segment_detection_end_samples_ / 2);
+    return segment_detection_counts_[kLEFT_LINE_SEGMENT] > (segment_detection_end_samples_ / 2);
   }
 
   static bool CenterLineSegmentFound() {
-    return segment_detection_counts_[kCENTER_LINE_SEGMENT] >= (segment_detection_center_samples_ / 2);
+    return segment_detection_counts_[kCENTER_LINE_SEGMENT] > (segment_detection_center_samples_ / 2);
   }
 
   static bool RightLineSegmentFound() {
-    return segment_detection_counts_[kRIGHT_LINE_SEGMENT] >= (segment_detection_end_samples_ / 2);
+    return segment_detection_counts_[kRIGHT_LINE_SEGMENT] > (segment_detection_end_samples_ / 2);
   }
   
   public:
@@ -88,6 +92,8 @@ class Strategy {
     LEFT_TURN,
     RIGHT_TURN_MIN_YAW,
     RIGHT_TURN,
+    DEAD_END_MIN_YAW,
+    SOLVED,
     END_OF_ENUM_DONT_USE
   };
   
@@ -138,30 +144,44 @@ class Strategy {
   }
   
   static void Process() {
+    static long lastCenterOdo = 0;
     float goalHeading;
     bool leftTurnFound = LeftLineFound();
     bool rightTurnFound = RightLineFound();
+    bool deadEndFound = CenterLineFound() ? false : (QuadratureEncoder::Counter() - lastCenterOdo) > kMIN_NO_CENTER_IS_DEAD_END;
     float position = (linePosition * 1.0) / 1000.0;
+    
+//    Serial.print("deadEndFound: ");
+//    Serial.print(deadEndFound);
+//    Serial.print(", lastCenterOdo: ");
+//    Serial.println(lastCenterOdo);
+    if (CenterLineFound()) {
+      lastCenterOdo = QuadratureEncoder::Counter();
+    }
     
     switch (state_) {
       case FOLLOW_LINE:
-        if (leftTurnFound || rightTurnFound) {
-          lineStartOdo_ = quadratureEncoder.Counter();
+        if (deadEndFound) {
+          Dump("@@@ DEAD END FOUND");
+          state_= DEAD_END_MIN_YAW;
+          break;
+        } else if (CenterLineFound() && (leftTurnFound || rightTurnFound)) {
+          lineStartOdo_ = QuadratureEncoder::Counter();
           lineEndOdo_ = lineStartOdo_;
           state_ = FIND_LINE_END;
           StartLineImaging();
           Dump("+++ FOLLOW_LINE FOUND LINE START");
-        } else {
+        } else if (CenterLineFound()) {
           if (position < 3.0) {
             Motor::Left(kTURN_SPEED, kTURN_SPEED);
-//            delay(50);
+            delay(50);
 //            Motor::Stop();
 //            delay(50);
             position = (linePosition * 1.0) / 1000.0;
             Dump("--- FOLLOW_LINE correcting with left turn");
           } else if (position > 4.0) {
-//            Motor::Right(kTURN_SPEED, kTURN_SPEED);
-//            delay(50);
+            Motor::Right(kTURN_SPEED, kTURN_SPEED);
+            delay(50);
 //            Motor::Stop();
 //            delay(50);
             position = (linePosition * 1.0) / 1000.0;
@@ -179,10 +199,10 @@ class Strategy {
         ImageLine();
         if ((!leftTurnFound && !rightTurnFound) && (lineEndOdo_ == lineStartOdo_)) {
           // Capture only once.
-          lineEndOdo_ = quadratureEncoder.Counter();
+          lineEndOdo_ = QuadratureEncoder::Counter();
         }
         
-        if (quadratureEncoder.Counter() > (lineStartOdo_ + 700)) {
+        if (QuadratureEncoder::Counter() > (lineStartOdo_ + 700)) {
           state_ = FOUND_END;
           Dump("+++ FIND_LINE_END FOUND LINE END BY MAX DISTANCE");
         } else if (!leftTurnFound && !rightTurnFound) {
@@ -193,15 +213,20 @@ class Strategy {
         break;
         
       case FOUND_END:
-        last_stopping_odo_ = quadratureEncoder.Counter();
+        last_stopping_odo_ = QuadratureEncoder::Counter();
         state_ = PRE_ROLL;
+        
+        if ((lineEndOdo_ - lineStartOdo_) > kODO_WIDTH_OF_STOP_SYMBOL) {
+          state_ = SOLVED;
+        }
+        
         break;
         
       case PRE_ROLL:
         Dump("+++ PRE_ROLL");
         Serial.print("goal odo: ");
         Serial.println(lineEndOdo_ + kODOS_TO_OVERSHOOT_LINE);
-        if (quadratureEncoder.Counter() > (lineEndOdo_ + kODOS_TO_OVERSHOOT_LINE)) {
+        if (QuadratureEncoder::Counter() > (lineEndOdo_ + kODOS_TO_OVERSHOOT_LINE)) {
           Motor::Stop();
           state_ = STOPPING;
         }
@@ -210,10 +235,10 @@ class Strategy {
         
       case STOPPING:
         ImageLine();
-        if (quadratureEncoder.Counter() != last_stopping_odo_) {
+        if (QuadratureEncoder::Counter() != last_stopping_odo_) {
           // Keep sampling until full stop.
           Dump("+++ STOPPING WAITING FOR FULL STOP");
-          last_stopping_odo_ = quadratureEncoder.Counter();
+          last_stopping_odo_ = QuadratureEncoder::Counter();
         } else {
           turn_start_heading_ = SensorStick::Heading();
           Dump("+++ STOPPING FOUND_END");
@@ -241,6 +266,7 @@ class Strategy {
                                   LeftLineSegmentFound(),
                                   RightLineSegmentFound(),
                                   CenterLineSegmentFound());
+            current_map_ = newMap;
             state_ = LEFT_TURN_MIN_YAW;
           } else if (RightLineSegmentFound()) {
             Map* newMap = new Map(current_map_, 
@@ -250,6 +276,7 @@ class Strategy {
                                   LeftLineSegmentFound(),
                                   RightLineSegmentFound(),
                                   CenterLineSegmentFound());
+            current_map_ = newMap;
             state_ = RIGHT_TURN_MIN_YAW;
           } else if (CenterLineSegmentFound()) {
             Map* newMap = new Map(current_map_, 
@@ -259,6 +286,7 @@ class Strategy {
                                   LeftLineSegmentFound(),
                                   RightLineSegmentFound(),
                                   CenterLineSegmentFound());
+            current_map_ = newMap;
             state_ = FOLLOW_LINE;
           } else {
             // Do something interesting.
@@ -297,11 +325,26 @@ class Strategy {
         if (position > 6.0) {
           Motor::Right(kTURN_SPEED, kTURN_SPEED);
         } else {
-          state_ = STOP;
+          state_ = FOLLOW_LINE;
         }
         
         break;
       
+      case DEAD_END_MIN_YAW:
+        Dump("+++ DEAD_END_MIN_YAW");
+        goalHeading = ((long)(turn_start_heading_ - kTURN_AROUND_DELTA_YAW)) % 360;
+        Serial.print("turn_start_heading_: ");
+        Serial.print(turn_start_heading_);
+        Serial.print(", goal heading: ");
+        Serial.println(goalHeading);
+        if (SensorStick::Heading() > goalHeading) {
+          Motor::Left(kTURN_SPEED, kTURN_SPEED);
+        } else {
+          state_ = LEFT_TURN;
+        }
+        
+        break;
+        
       case LEFT_TURN_MIN_YAW:
         Dump("+++ LEFT_TURN_MIN_YAW");
         goalHeading = ((long)(turn_start_heading_ - kMAKE_TURN_DELTA_YAW)) % 360;
@@ -330,13 +373,18 @@ class Strategy {
         if (position < 1.0) {
           Motor::Left(kTURN_SPEED, kTURN_SPEED);
         } else {
-          state_ = STOP;
+          state_ = FOLLOW_LINE;
         }
         
         break;
        
       case STOP:
         Dump("+++ STOP");
+        Motor::Stop();
+        break;
+        
+      case SOLVED:
+        Dump("+++ SOLVED");
         Motor::Stop();
         break;
     }
@@ -388,6 +436,8 @@ const char* Strategy::kSTATE_NAMES[END_OF_ENUM_DONT_USE] = {
   "LEFT_TURN",
   "RIGHT_TURN_MIN_YAW",
   "RIGHT_TURN",
+  "DEAD_END__MIN_YAW",
+  "SOLVED",
 };
     
 #endif
