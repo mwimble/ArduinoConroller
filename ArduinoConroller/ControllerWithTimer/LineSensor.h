@@ -9,7 +9,7 @@ class LineSensor {
   typedef unsigned int TSensorArray[NUM_SENSORS] ;
 
   private:
-  static const int CALIBRATION_MAX = 1600;
+  static const int CALIBRATION_MAX = 1200;
   static const int CALIBRATION_MIN = 200;
   static const int EMITTER_PIN = 39;
   

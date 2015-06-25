@@ -36,6 +36,8 @@ void setup() {
   Serial.println("Start");
   Serial.println("Enter key to start");
   waitSerial();  
+  
+  delay(10000);
 
   LineSensor::Calibrate();
   microStart = myMicros();
