@@ -3,6 +3,7 @@
 
 #include "QuadratureEncoder.h"
 
+extern Log logger;
 extern QuadratureEncoder quadratureEncoder;
 
 class Map {
@@ -80,38 +81,38 @@ class Map {
   }
   
   void Dump() {
-    Serial.print("== == MAP @");
-    Serial.println((long) this);
-    Serial.print("  x: ");
-    Serial.print(logical_x_);
-    Serial.print(", y: ");
-    Serial.print(logical_y_);
-    Serial.print(", turn: ");
-    Serial.print(kTurnName[turn_]);
-    Serial.print(", heading: ");
-    Serial.print(heading_degrees_);
-    Serial.print(", logical heading: ");
-    Serial.println(kHeadingName[logical_heading_]);
+    logger.print("== == MAP @");
+    logger.println((long) this);
+    logger.print("  x: ");
+    logger.print(logical_x_);
+    logger.print(", y: ");
+    logger.print(logical_y_);
+    logger.print(", turn: ");
+    logger.print(kTurnName[turn_]);
+    logger.print(", heading: ");
+    logger.print(heading_degrees_);
+    logger.print(", logical heading: ");
+    logger.println(kHeadingName[logical_heading_]);
     
-    Serial.print("  length: ");
-    Serial.print(length_);
-    Serial.print(", odometer: ");
-    Serial.print(odometer_);
-    Serial.print(", loop detected: ");
-    Serial.print(loop_detected_ ? "T" : "f");
-    Serial.print(", has_left_turn: ");
-    Serial.print(has_left_turn_ ? "T" : "f");
-    Serial.print(", has_right_turn: ");
-    Serial.print(has_right_turn_ ? "T" : "f");
-    Serial.print(", has_continuation: ");
-    Serial.println(has_continuation_ ? "T" : "f");
+    logger.print("  length: ");
+    logger.print(length_);
+    logger.print(", odometer: ");
+    logger.print(odometer_);
+    logger.print(", loop detected: ");
+    logger.print(loop_detected_ ? "T" : "f");
+    logger.print(", has_left_turn: ");
+    logger.print(has_left_turn_ ? "T" : "f");
+    logger.print(", has_right_turn: ");
+    logger.print(has_right_turn_ ? "T" : "f");
+    logger.print(", has_continuation: ");
+    logger.println(has_continuation_ ? "T" : "f");
 
-    Serial.print("left: ");
-    Serial.print((long) left_);
-    Serial.print(", center: ");
-    Serial.print((long) center_);
-    Serial.print(", right: ");
-    Serial.println((long) right_);
+    logger.print("left: ");
+    logger.print((long) left_);
+    logger.print(", center: ");
+    logger.print((long) center_);
+    logger.print(", right: ");
+    logger.println((long) right_);
   }
   
   static void DumpTree(Map* node) {
@@ -121,7 +122,7 @@ class Map {
       if (node->center_) DumpTree(node->center_);
       if (node->right_) DumpTree(node->right_);
     } else {
-      Serial.print("NULL NODE");
+      logger.print("NULL NODE");
     }
   }
   

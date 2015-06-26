@@ -6,6 +6,8 @@
 #include "I2Cdev.h"
 #include "HMC5883L.h"
 
+extern Log logger;
+
 class SensorStick {
   public:
   SensorStick() {
@@ -16,7 +18,7 @@ class SensorStick {
     if (!initialized_) {
       mag_.initialize();
       if (!mag_.testConnection()) {
-        Serial.println("Unable to communicate with sensor stick");
+        logger.println("Unable to communicate with sensor stick");
         return;
       }
       

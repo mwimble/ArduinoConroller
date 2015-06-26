@@ -4,9 +4,10 @@
 // TODO
 // * Average two LineSensor readings to reduce anomolies.
 
-extern unsigned long myMicros();
-extern LineSensor lineSensor;
 extern unsigned int linePosition;
+extern LineSensor lineSensor;
+extern Log logger;
+extern unsigned long myMicros();
 
 class Strategy {
   public:
@@ -126,30 +127,30 @@ class Strategy {
     bool rightTurnFound = RightLineFound();
     float position = (linePosition * 1.0) / 1000.0;
     float ms = ((myMicros() * 1.0) - start_time_) / 1000.0;
-    Serial.print(ms);
-    Serial.print(" :: ");
-    Serial.print(message);
-    Serial.print(" [Odo:");
-    Serial.print(QuadratureEncoder::Counter());
-    Serial.print("] State: ");
-    Serial.print(kSTATE_NAMES[state_]);
-    Serial.print(", Position: ");
-    Serial.print(position);
-    Serial.print(leftTurnFound ? "  *L " : "   L ");
+    logger.print(ms);
+    logger.print(" :: ");
+    logger.print(message);
+    logger.print(" [Odo:");
+    logger.print(QuadratureEncoder::Counter());
+    logger.print("] State: ");
+    logger.print(kSTATE_NAMES[state_]);
+    logger.print(", Position: ");
+    logger.print(position);
+    logger.print(leftTurnFound ? "  *L " : "   L ");
     for (int i = 0; i < 8; i++) {
-      Serial.print(line_sensor_values_[i]);
-      Serial.print(" ");
+      logger.print(line_sensor_values_[i]);
+      logger.print(" ");
     }
     
-    Serial.print(rightTurnFound ? "R* " : "R  ");
-    Serial.print(", YAW: ");
-    Serial.print(SensorStick::Heading());
-    Serial.print(", s: ");
-    Serial.print(lineStartOdo_);
-    Serial.print(", e: ");
-    Serial.print(lineEndOdo_);
-    Serial.print(", len: ");
-    Serial.println(lineEndOdo_ - lineStartOdo_);
+    logger.print(rightTurnFound ? "R* " : "R  ");
+    logger.print(", YAW: ");
+    logger.print(SensorStick::Heading());
+    logger.print(", s: ");
+    logger.print(lineStartOdo_);
+    logger.print(", e: ");
+    logger.print(lineEndOdo_);
+    logger.print(", len: ");
+    logger.println(lineEndOdo_ - lineStartOdo_);
   }
   
   static void Stop() {
@@ -166,10 +167,10 @@ class Strategy {
     bool deadEndFound = CenterLineFound() ? false : (QuadratureEncoder::Counter() - lastCenterOdo) > kMIN_NO_CENTER_IS_DEAD_END;
     float position = (linePosition * 1.0) / 1000.0;
     
-//    Serial.print("deadEndFound: ");
-//    Serial.print(deadEndFound);
-//    Serial.print(", lastCenterOdo: ");
-//    Serial.println(lastCenterOdo);
+//    logger.print("deadEndFound: ");
+//    logger.print(deadEndFound);
+//    logger.print(", lastCenterOdo: ");
+//    logger.println(lastCenterOdo);
     if (CenterLineFound()) {
       lastCenterOdo = QuadratureEncoder::Counter();
     }
@@ -258,7 +259,7 @@ class Strategy {
         Dump("+++ RIGHT_TURN");
         if (false && IsCloseTo(SensorStick::Heading(), turn_start_heading_, 15)) {
           // Turned too far and not found line.
-          Serial.println("@@@ @@@ FAILED TO FIND LINE AFTER RIGHT TURN");
+          logger.println("@@@ @@@ FAILED TO FIND LINE AFTER RIGHT TURN");
           state_ = STOP;
           break;
         }
@@ -283,18 +284,18 @@ class Strategy {
         Dump("+++ LEFT_TURN");
         if (false && IsCloseTo(SensorStick::Heading(), turn_start_heading_, 15)) {
           // Turned too far and not found line.
-          Serial.println("@@@ @@@ FAILED TO FIND LINE AFTER LEFT TURN");
+          logger.println("@@@ @@@ FAILED TO FIND LINE AFTER LEFT TURN");
           state_ = STOP;
           break;
         }
         
         if ((position < 3.0) || (position >= 7.0) || !AnyLineFound()) {
-          Serial.print("### LEFT TURN, looking for position < 3.0, position: ");
+          logger.print("### LEFT TURN, looking for position < 3.0, position: ");
           Motor::Left(kTURN_SPEED, kTURN_SPEED);
         } else {
-          Serial.print("### LEFT TURN position is > 3, follow line, position: ");
+          logger.print("### LEFT TURN position is > 3, follow line, position: ");
           state_ = FOLLOW_LINE;
-          Serial.println(position);
+          logger.println(position);
         }
         
         break;
@@ -342,8 +343,8 @@ class Strategy {
     preroll_goal_odo_ = lineEndOdo_ + kODOS_TO_OVERSHOOT_LINE;
     Dump("+++ START PRE_ROLL");
     if (kDEBUG_PREROLL) {
-      Serial.print("goal odo: ");
-      Serial.println(preroll_goal_odo_);
+      logger.print("goal odo: ");
+      logger.println(preroll_goal_odo_);
     }
   }
   
@@ -362,8 +363,8 @@ class Strategy {
       state_ = STOPPING;
 
       if (kDEBUG_PREROLL) {
-        Serial.print("goal odo: ");
-        Serial.print(preroll_goal_odo_);
+        logger.print("goal odo: ");
+        logger.print(preroll_goal_odo_);
       }
       
       Dump("+++ START STOPPING");
@@ -390,28 +391,28 @@ class Strategy {
       long fullStopOdo = QuadratureEncoder::Counter();
       turn_start_heading_ = SensorStick::Heading();
       Dump("+++ STOPPING FOUND_END");
-      Serial.print("Start odo: ");
-      Serial.print(stopping_start_odo_);
-      Serial.print(", full stop odo: ");
-      Serial.print(fullStopOdo);
-      Serial.print(", distance traveled to stop: ");
-      Serial.println(fullStopOdo - stopping_start_odo_);
-      Serial.print("Left/right segment samples: ");
-      Serial.print(segment_detection_end_samples_);
-      Serial.print(", center segment samples: ");
-      Serial.print(segment_detection_center_samples_);
-      Serial.print(", L");
-      Serial.print(LeftLineSegmentFound() ? "*" : "");
-      Serial.print(": ");
-      Serial.print(segment_detection_counts_[kLEFT_LINE_SEGMENT]);
-      Serial.print(", C");
-      Serial.print(CenterLineSegmentFound() ? "*" : "");
-      Serial.print(": ");
-      Serial.print(segment_detection_counts_[kCENTER_LINE_SEGMENT]);
-      Serial.print(", R");
-      Serial.print(RightLineSegmentFound() ? "*" : "");
-      Serial.print(": ");
-      Serial.println(segment_detection_counts_[kRIGHT_LINE_SEGMENT]);
+      logger.print("Start odo: ");
+      logger.print(stopping_start_odo_);
+      logger.print(", full stop odo: ");
+      logger.print(fullStopOdo);
+      logger.print(", distance traveled to stop: ");
+      logger.println(fullStopOdo - stopping_start_odo_);
+      logger.print("Left/right segment samples: ");
+      logger.print(segment_detection_end_samples_);
+      logger.print(", center segment samples: ");
+      logger.print(segment_detection_center_samples_);
+      logger.print(", L");
+      logger.print(LeftLineSegmentFound() ? "*" : "");
+      logger.print(": ");
+      logger.print(segment_detection_counts_[kLEFT_LINE_SEGMENT]);
+      logger.print(", C");
+      logger.print(CenterLineSegmentFound() ? "*" : "");
+      logger.print(": ");
+      logger.print(segment_detection_counts_[kCENTER_LINE_SEGMENT]);
+      logger.print(", R");
+      logger.print(RightLineSegmentFound() ? "*" : "");
+      logger.print(": ");
+      logger.println(segment_detection_counts_[kRIGHT_LINE_SEGMENT]);
       
       if (LeftLineSegmentFound()) {
         Map* newMap = new Map(current_map_, 
@@ -445,7 +446,7 @@ class Strategy {
         state_ = RIGHT_TURN_MIN_YAW;
       } else {
         // Do something interesting.
-        Serial.println("@@@ DEAD END @@@");
+        logger.println("@@@ DEAD END @@@");
         state_ = STOP;
       }
     }

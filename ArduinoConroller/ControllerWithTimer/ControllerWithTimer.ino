@@ -7,6 +7,7 @@
 #include "HMC5883L.h"
 #include "I2Cdev.h"
 #include "LineSensor.h"
+#include "Log.h"
 #include "Map.h"
 #include "Motor.h"
 #include "QuadratureEncoder.h"
@@ -19,26 +20,16 @@ const unsigned long DEBUG_TIME_USEC = 60000000;
 extern unsigned long myMicros();
 unsigned long microStart = myMicros();
 
+Log logger = Log();
 LineSensor lineSensor = LineSensor();
 Motor motor = Motor();
 QuadratureEncoder quadratureEncoder = QuadratureEncoder();
 SensorStick sensorStick = SensorStick();
 Strategy strategy = Strategy();
 	
-void waitSerial() {
-  while (!Serial.available());
-  delay(10);
-  while (Serial.available() && Serial.read());	
-}
-
 void setup() {
-  Serial.begin(57600);
-  Serial.println("Start");
-  Serial.println("Enter key to start");
-  waitSerial();  
+  logger.waitSerial();  
   
-  delay(10000);
-
   LineSensor::Calibrate();
   microStart = myMicros();
   strategy.Initialize();
@@ -76,29 +67,29 @@ void loop() {
       if (!statsReported) {
         unsigned long microEnd = myMicros();
         unsigned long duration = microEnd - microStart;
-        Serial.println("==== ==== STATS");
+        logger.println("==== ==== STATS");
         
-        Serial.print("loopCount: ");
-        Serial.print(loopCount);
-        Serial.print(", avg loop duration: ");
-        Serial.println((duration * 1.0) / (loopCount * 1.0));
+        logger.print("loopCount: ");
+        logger.print(loopCount);
+        logger.print(", avg loop duration: ");
+        logger.println((duration * 1.0) / (loopCount * 1.0));
         
-        Serial.print("usec at start: ");
-        Serial.print(microStart);
-        Serial.print(", at end: ");
-        Serial.print(microEnd);
-        Serial.print(", duration: ");
-        Serial.println(duration);
+        logger.print("usec at start: ");
+        logger.print(microStart);
+        logger.print(", at end: ");
+        logger.print(microEnd);
+        logger.print(", duration: ");
+        logger.println(duration);
         
-        Serial.print("lineSensor sumLineSensorRead: ");
-        Serial.print(sumLineSensorRead);
-        Serial.print(", avg read duration: ");
-        Serial.println((sumLineSensorRead * 1.0) / (loopCount * 1.0));
+        logger.print("lineSensor sumLineSensorRead: ");
+        logger.print(sumLineSensorRead);
+        logger.print(", avg read duration: ");
+        logger.println((sumLineSensorRead * 1.0) / (loopCount * 1.0));
         
-        Serial.print("sensorStick sumSensorStickRead: ");
-        Serial.print(sumSensorStickRead);
-        Serial.print(",  avg read dration: ");
-        Serial.println((sumSensorStickRead * 1.0) / (loopCount * 1.0));
+        logger.print("sensorStick sumSensorStickRead: ");
+        logger.print(sumSensorStickRead);
+        logger.print(",  avg read dration: ");
+        logger.println((sumSensorStickRead * 1.0) / (loopCount * 1.0));
         
         Strategy::Dump("Final dump");
         Map::DumpTree(Strategy::StartMap());

@@ -3,6 +3,8 @@
 
 #include <QueueList.h>
 
+extern Log logger;
+
 class Motor {
   public:
   
@@ -53,11 +55,11 @@ class Motor {
     cli();
     commands_.push(command);
     sei();
-    Serial.print("Command pushed, len: ");Serial.println(commands_.count());
+    logger.print("Command pushed, len: ");logger.println(commands_.count());
   }
   
   static void Process() {
-    Serial.print("Q len: " );Serial.println(commands_.count());
+    logger.print("Q len: " );logger.println(commands_.count());
     if (!commands_.isEmpty() && !motor_busy_) {
       cli();
       Command command = commands_.pop();
@@ -105,7 +107,7 @@ class Motor {
   }
 
   static void Forward(int speed_a, int speed_b) {
-    //Serial.println(">> FORWARD");
+    //logger.println(">> FORWARD");
     speed_a_ = speed_a;
     speed_b_ = speed_b;
     analogWrite(SPEED_A, speed_a_);
@@ -117,7 +119,7 @@ class Motor {
   }
   
   static void Backward(int speed_a, int speed_b) {
-    //Serial.println(">> BACKWARD");
+    //logger.println(">> BACKWARD");
     speed_a_ = speed_a;
     speed_b_ = speed_b;
     analogWrite(SPEED_A, speed_a_);
@@ -129,7 +131,7 @@ class Motor {
   }
   
   static void Left(int speed_a, int speed_b) {
-    //Serial.println(">> LEFT");
+    //logger.println(">> LEFT");
     speed_a_ = speed_a;
     speed_b_ = speed_b;
     analogWrite(SPEED_A, speed_a_);
@@ -141,7 +143,7 @@ class Motor {
   }
   
   static void Right(int speed_a, int speed_b) {
-    //Serial.println(">> RIGHT");
+    //logger.println(">> RIGHT");
     speed_a_ = speed_a;
     speed_b_ = speed_b;
     analogWrite(SPEED_A, speed_a_);
@@ -163,7 +165,7 @@ ISR(timer4Event) {
   pauseTimer4();
   resetTimer4();
   Motor::Stop();
-  Serial.println("timer4Event");
+  logger.println("timer4Event");
 }
 
 #endif
