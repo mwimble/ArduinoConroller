@@ -39,10 +39,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/pi/cvtest
+CMAKE_SOURCE_DIR = /home/pi/Robotics/cvtest
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/pi/cvtest
+CMAKE_BINARY_DIR = /home/pi/Robotics/cvtest
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -69,9 +69,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pi/cvtest/CMakeFiles /home/pi/cvtest/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pi/Robotics/cvtest/CMakeFiles /home/pi/Robotics/cvtest/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pi/cvtest/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pi/Robotics/cvtest/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,6 +111,30 @@ detecto/fast:
 	$(MAKE) -f CMakeFiles/detecto.dir/build.make CMakeFiles/detecto.dir/build
 .PHONY : detecto/fast
 
+EwynCamera.o: EwynCamera.cpp.o
+.PHONY : EwynCamera.o
+
+# target to build an object file
+EwynCamera.cpp.o:
+	$(MAKE) -f CMakeFiles/detecto.dir/build.make CMakeFiles/detecto.dir/EwynCamera.cpp.o
+.PHONY : EwynCamera.cpp.o
+
+EwynCamera.i: EwynCamera.cpp.i
+.PHONY : EwynCamera.i
+
+# target to preprocess a source file
+EwynCamera.cpp.i:
+	$(MAKE) -f CMakeFiles/detecto.dir/build.make CMakeFiles/detecto.dir/EwynCamera.cpp.i
+.PHONY : EwynCamera.cpp.i
+
+EwynCamera.s: EwynCamera.cpp.s
+.PHONY : EwynCamera.s
+
+# target to generate assembly for a file
+EwynCamera.cpp.s:
+	$(MAKE) -f CMakeFiles/detecto.dir/build.make CMakeFiles/detecto.dir/EwynCamera.cpp.s
+.PHONY : EwynCamera.cpp.s
+
 detecto.o: detecto.cpp.o
 .PHONY : detecto.o
 
@@ -144,6 +168,9 @@ help:
 	@echo "... detecto"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... EwynCamera.o"
+	@echo "... EwynCamera.i"
+	@echo "... EwynCamera.s"
 	@echo "... detecto.o"
 	@echo "... detecto.i"
 	@echo "... detecto.s"
