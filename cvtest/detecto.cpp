@@ -1,6 +1,11 @@
+#include <chrono>
+#include <ctime>
 #include <iostream>
+#include <string>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+
+#include "EwynCamera.h"
 
 using namespace cv;
 using namespace std;
@@ -179,8 +184,80 @@ bool pixelRepresentsALine(uchar pixel) {
     return pixel == 255;
 }
 
-int main( int argc, char** argv )
-{
+int main( int argc, char** argv ) {
+     std::chrono::time_point<std::chrono::system_clock> start, end, loopStart;
+
+    EwynCamera  camera("/home/pi/Robotics/cvtest/floor1.jpg", 0.25);
+    if (!camera.imageFound()) {
+        throw -1;
+    }
+
+    camera.createControlWindow();
+    imshow("Original Image", camera.getOriginalImage());
+
+    camera.thresholdImage();
+    imshow("Thresholded Image", camera.getThresholdedImage());
+
+    waitKey(0);
+
+    /*
+    double accumTime = 0.0;
+    std::chrono::duration<double> elapsed_seconds;
+    for (int i = 0; i < 10; i++) {
+        start = std::chrono::system_clock::now();
+        camera.updateOriginalImage();
+        end = std::chrono::system_clock::now();
+        elapsed_seconds = end-start;
+        accumTime += elapsed_seconds.count();
+    }
+    Size size = camera.getOriginalImage().size();
+    cout << "fps for still image: " << (10.0 / accumTime) << ", imageSize height: " << size.height << ", width: " << size.width << endl;
+
+    //waitKey(0);
+
+    camera = EwynCamera(VideoCapture(0), 1.0);
+    accumTime = 0.0;
+    for (int i = 0; i < 10; i++) {
+        start = std::chrono::system_clock::now();
+        camera.updateOriginalImage();
+        end = std::chrono::system_clock::now();
+        elapsed_seconds = end-start;
+        accumTime += elapsed_seconds.count();
+    }
+    cout << "fps for video image: " << (10.0 / accumTime) << endl;
+    
+    accumTime = 0.0;
+    int count = 0;
+    loopStart = std::chrono::system_clock::now();
+    while (true) {
+        start = std::chrono::system_clock::now();
+        camera.updateOriginalImage();
+        if (!camera.imageFound()) {
+            throw -1;
+        }
+
+        //imshow("Original Video", camera.getOriginalImage());
+        if (waitKey(3) == 27) {
+            break;
+        }
+        end = std::chrono::system_clock::now();
+        elapsed_seconds = end - start;
+        accumTime += elapsed_seconds.count();
+        count++;
+        if (count >= 100) { break;}
+    }
+
+    end = std::chrono::system_clock::now();
+    elapsed_seconds = end - loopStart;
+    double loopSeconds = elapsed_seconds.count();
+    size = camera.getOriginalImage().size();
+
+    cout << "fps for video image: " << ((count * 1.0) / accumTime)  << ", count: " << count << ", accum time: " << accumTime
+         << ", total loop time: " << loopSeconds << ", imageSize height: " << size.height << ", width: " << size.width << endl;
+    */
+
+    return 0;
+/*
     VideoCapture cap(0); // Capture the video.
     cout << "About to namedWindow" << endl;
     namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
@@ -360,4 +437,5 @@ int main( int argc, char** argv )
         << endl;
 
   return 0;
+*/
 }

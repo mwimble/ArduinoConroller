@@ -2,7 +2,7 @@
 cmake_minimum_required (VERSION 2.8) 
 project (detecto)
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/lib/cmake/)
-SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g")
+SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g -std=gnu++0x")
 find_package(OpenCV)
 IF  ( OpenCV_FOUND)
   MESSAGE(STATUS "COMPILING OPENCV TESTS")
