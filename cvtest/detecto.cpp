@@ -10,182 +10,10 @@
 using namespace cv;
 using namespace std;
 
-typedef enum { V, H } TLINE_DIRECTION;
-
-static const char* TLINE_DIRECTION_STRINGS[] = { "V", "H" };
-
-struct TLINE_SEGMENT {
-    int x;
-    int y;
-    int length;
-    TLINE_DIRECTION dir;
-
-    TLINE_SEGMENT(int xx, int yy, int ll, TLINE_DIRECTION dd) :
-        x(xx), y(yy), length(ll), dir(dd) {};
-
-    String dump() const {
-        stringstream ss;
-        ss << "{"
-             << "x:" << x
-             << ", y:" << y
-             << ", l:"  << length
-             << ", d: " << dir
-             << "}";
-        return ss.str();
-    }
-};
-
-struct TLINE {
-    int number;
-    int lastMidpoints[10];
-    int midpointIndex;
-    long sumLengths;
-    TLINE_DIRECTION dir;
-    vector<TLINE_SEGMENT> lineSegments;
-
-    static int nextNumber;
-
-    TLINE() {
-        for (int i = 0; i < 10; i++) { lastMidpoints[i] = -1; }
-        midpointIndex = 0;
-        sumLengths = 0;
-        number = nextNumber++;
-    }
-
-    static const bool debugAddLineElement = true;
-    
-    int length() const {
-        return lineSegments.size() == 0 ? 0 : sumLengths / lineSegments.size();
-    }
-
-    int midpoint() const {
-        int result = 0;
-        int count = 0;
-        for (int i = 0; i < 10; i++) {
-            if (lastMidpoints[i] != -1) {
-                result += lastMidpoints[i];
-                count++;
-            }
-        }
-
-        return count == 0 ? 0 : result / count;
-    } 
-
-    void addLineSegment(TLINE_SEGMENT lineSegment) {
-        lineSegments.push_back(lineSegment);
-        lastMidpoints[midpointIndex++] = lineSegment.x + (lineSegment.length / 2);
-        if (midpointIndex >= 10) midpointIndex = 0;
-        sumLengths += lineSegment.length;
-        if (debugAddLineElement) {
-            cout << "Push to existing line[" << number
-                 << "] back: " << lineSegments.back().dump()
-                 << ", newLine: " << lineSegment.dump()
-                 << ", avg midpoint: " << midpoint()
-                 << ", line midpoint: " << (lineSegment.x + lineSegment.length / 2)
-                 << ", segment count: " << lineSegments.size()
-                 << endl;
-        }
-    }
-
-    static String dump(const vector<TLINE>& arrayOfLines, int row) {
-        stringstream ss;
-        const TLINE_SEGMENT& first = arrayOfLines[row].lineSegments.front();
-        const TLINE_SEGMENT& last = arrayOfLines[row].lineSegments.back();
-        ss << "{Line " << row 
-           << ", dir: " << TLINE_DIRECTION_STRINGS[arrayOfLines[row].dir]
-           << ", segCount: " << arrayOfLines[row].lineSegments.size()
-           << ", front: " << first.dump()
-           << ", back: " << last.dump()
-           << ", avg midpoint: " << arrayOfLines[row].midpoint()
-           << ", avg length: " << arrayOfLines[row].length()
-           << ", box ll: " << first.x << "," << first.y
-           << ", ul: " << last.x << "," << last.y
-           << ", lr: " << (first.x + first.length - 1) << "," << first.y
-           << ", ur: " << (last.x + last.length - 1) << "," << last.y
-           << "}";
-        return ss.str();
-    }
-};
-
-int TLINE::nextNumber = 0;
-
-
-static const bool debugLinesOverlap = true;
-bool linesOverlap(const TLINE_SEGMENT l1, TLINE_SEGMENT l2) {
-    bool result = false;
-    if (l1.x <= l2.x) {
-        result = l2.x <= (l1.x + l1.length);
-    } else {
-        result = l1.x <= (l2.x + l2.length);
-    }
-
-    if (debugLinesOverlap) {
-        cout << "linesOverlap result: " << result << ", l1: " << l1.dump() << ", l2: " << l2.dump() << endl;
-    }
-
-    return result;
-}
-
-void insertLineElement(vector<TLINE>& arrayOfLines, const TLINE_SEGMENT newLine) {
-    bool lineFound = false;
-
-    // Iterate over all existing lines as this new line might be part of several
-    // existing lines if the lines in the image are not perfectly N, S, E, W.
-    for (int i = 0; i < arrayOfLines.size(); i++) {
-        if (linesOverlap(arrayOfLines[i].lineSegments.back(), newLine) &&
-            (newLine.x >= arrayOfLines[i].midpoint() - arrayOfLines[i].length()) &&
-            (newLine.x <= arrayOfLines[i].midpoint() + arrayOfLines[i].length())) {
-            arrayOfLines[i].addLineSegment(newLine);
-            lineFound = true;
-        }
-    }
-
-    if (!lineFound) {
-        cout << "Creating new line" << endl;
-        TLINE oneElementVector;
-        oneElementVector.addLineSegment(newLine);
-        oneElementVector.dir = newLine.dir;
-        arrayOfLines.push_back(oneElementVector);
-    }
-}
-
-static const bool debugLinearCurveFit = false;
-void linearCurveFit(const TLINE& data) {
-    if (debugLinearCurveFit) {
-        cout << "linearCurveFit START data.lineSegments.size(): " << data.lineSegments.size() << endl;
-    }
-
-    long sumx = 0;
-    long sumx2 = 0;
-    long sumy = 0;
-    long sumxy = 0;
-    int n = data.lineSegments.size();
-    for (int i=0; i <= n - 1; i++) {
-        sumx = sumx + data.lineSegments[i].x;
-        sumx2 = sumx2 + data.lineSegments[i].x * data.lineSegments[i].x;
-        sumy = sumy + data.lineSegments[i].y;
-        sumxy = sumxy + data.lineSegments[i].x * data.lineSegments[i].y;
-    }
-
-    float t1 = ((sumx2 * 1.0) * (sumy * 1.0));
-    float t2 = ((sumx * 1.0) * (sumxy * 1.0));
-    float num = t1 - t2;
-    float t3 = ((n * 1.0) * (sumx2 * 1.0));
-    float t4 = ((sumx * 1.0) * (sumx * 1.0));
-    float denom = t3 - t4;
-    float a = num / denom;
-    float b = ((n * sumxy) - (sumx * sumy * 1.0)) / ((n * sumx2) - (sumx * sumx * 1.0));
-    if (debugLinearCurveFit) {
-        cout << "n: " << n << ", t1: " << t1 << ", t2: " << t2 << ", num: " << num << ", t3: " << t3 << ", t4: " << t4 << ", denom: " << denom << ", a: " << a << ", b: " << b << endl;
-    }
-}
-
-bool pixelRepresentsALine(uchar pixel) {
-    return pixel == 255;
-}
+Scalar colorArray[] = {Scalar(0, 0, 255),Scalar(255, 0, 0),Scalar(0, 255, 0),Scalar(255, 128, 64),Scalar(64, 128, 255),Scalar(128, 255, 64),Scalar(77,77,77),Scalar(164,124,68),Scalar(204,196,132),Scalar(164,148,147),Scalar(163,123,67),Scalar(26,122,26), Scalar(195,195,50),Scalar(193,193,193),Scalar(255,248,73),Scalar(243,243,243)};
 
 int main( int argc, char** argv ) {
-     std::chrono::time_point<std::chrono::system_clock> start, end, loopStart;
+    std::chrono::time_point<std::chrono::system_clock> start, end, loopStart;
 
     EwynCamera  camera("/home/pi/Robotics/cvtest/floor1.jpg", 0.25);
     if (!camera.imageFound()) {
@@ -193,11 +21,45 @@ int main( int argc, char** argv ) {
     }
 
     camera.createControlWindow();
-    imshow("Original Image", camera.getOriginalImage());
-
     camera.thresholdImage();
-    imshow("Thresholded Image", camera.getThresholdedImage());
 
+    camera.detectLines();
+    std::vector<EwynCamera::TLINE> verticalLines = camera.getVerticalLines();
+    cout << "VERTICAL LINES all count: " << verticalLines.size() << endl;
+    Mat ti = camera.getOriginalImage();
+    int colorArrayLength = sizeof(colorArray) / sizeof(colorArray[0]);
+    for (int i = 0; i < verticalLines.size(); i++) {
+        const EwynCamera::TLINE line = verticalLines[i];
+        const EwynCamera::TLINE_SEGMENT& first = line.lineSegments.front();
+        const EwynCamera::TLINE_SEGMENT& last = line.lineSegments.back();
+        if (line.lineSegments.size() > 5) {
+            cout << verticalLines[i].toString() << endl;
+            EwynCamera::TLINE::CURVE_FIT curveFit = verticalLines[i].linearCurveFit();
+            cout << "...Curve fit a: " << curveFit.a << ", b: " << curveFit.b << endl;
+            for (int segx = 0; segx < line.lineSegments.size(); segx++) {
+                const EwynCamera::TLINE_SEGMENT seg = line.lineSegments[segx];
+                cv::line(ti, Point(seg.x, seg.y), Point(seg.x - 1, seg.y + 1), colorArray[i % colorArrayLength], 1, 8);
+                cv::line(ti, Point(seg.x, seg.y), Point(seg.x + seg.length - 1, seg.y + 1), colorArray[i % colorArrayLength], 1, 8);
+            }
+            //linearCurveFit(line);
+            /*
+            cv::line(ti, Point(first.x, first.y), Point(last.x, last.y), colorArray[i % colorArrayLength], 2, 8);
+            cv::line(ti, Point(last.x, last.y), Point(last.x + last.length, last.y), colorArray[i % colorArrayLength], 2, 8);
+            cv::line(ti, Point(last.x + last.length, last.y), Point(first.x + first.length, first.y), colorArray[i % colorArrayLength], 2, 8);
+            cv::line(ti, Point(first.x + first.length, first.y), Point(first.x, first.y), colorArray[i % colorArrayLength], 2, 8);
+            */
+        }
+    }
+
+    Scalar axisColor = Scalar(0, 255, 255);
+    Scalar verticalLineColor = Scalar(0, 136, 255);
+    Size size = camera.getOriginalImage().size();
+    EwynCamera::TLINE::CURVE_FIT curveFit = verticalLines[0].linearCurveFit();
+    cv::line(ti, Point(size.width / 2, size.height), Point (size.width / 2, 0), axisColor, 1, 8);
+    cv::line(ti, Point(0, size.height / 2), Point(size.width, size.height / 2), axisColor, 1, 8);
+    cv::line(ti, Point(curveFit.a + curveFit.b * size.height, size.height), Point(curveFit.a , 0), verticalLineColor, 1, 8);
+    imshow("Original Image", camera.getOriginalImage());
+    imshow("Thresholded Image", camera.getThresholdedImage());
     waitKey(0);
 
     /*
