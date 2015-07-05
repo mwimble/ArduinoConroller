@@ -13,18 +13,19 @@ void handleControlChange(int newValue, void* userData) {
 }
 
 EwynCamera::EwynCamera(VideoCapture videoDevice, double scaleFactor)
-	: morphSize(5,5), scaleFactor(scaleFactor) {
+	: imageLoaded(false), morphSize(5,5), scaleFactor(scaleFactor) {
 	controlWindowName = "Ewyn Camera Controls";
 	setDefaultThresholding();
 	videoFeed = videoDevice;
-	imageLoaded = videoFeed.read(originalImage);
+	videoDevice >> originalImage;
+	imageLoaded = videoDevice.read(originalImage);
 	if (imageLoaded) {
 		scaleOriginalImage(scaleFactor);
 	}
 }
 
 EwynCamera::EwynCamera(const std::string testFileName, double scaleFactor)
-	: morphSize(5,5), scaleFactor(scaleFactor) {
+	: imageLoaded(false), morphSize(5,5), scaleFactor(scaleFactor) {
 	struct stat buffer;
 
 	controlWindowName = "Ewyn Camera Controls";
@@ -194,18 +195,16 @@ void EwynCamera::thresholdImage() {
 }
 
 void EwynCamera::updateOriginalImage() {
-	if (imageLoaded) {
-		if (fileName.size() > 0) {
-			originalImage = imread(fileName);
-			imageLoaded = !originalImage.empty();
-			if (imageLoaded) {
-				scaleOriginalImage(scaleFactor);
-			}
-		} else {
-			imageLoaded = videoFeed.read(originalImage);
-			if (imageLoaded) {
-				scaleOriginalImage(scaleFactor);
-			}
+	if (fileName.size() > 0) {
+		originalImage = imread(fileName);
+		imageLoaded = !originalImage.empty();
+		if (imageLoaded) {
+			scaleOriginalImage(scaleFactor);
+		}
+	} else {
+		imageLoaded = videoFeed.read(originalImage);
+		if (imageLoaded) {
+			scaleOriginalImage(scaleFactor);
 		}
 	}
 }
@@ -288,7 +287,7 @@ EwynCamera::TLINE::CURVE_FIT EwynCamera::TLINE::linearCurveFit() {
         	 << ", b: " << b << endl;
     }
 
-    return {a, b};
+    return CURVE_FIT(a, b);
 }
 
 int EwynCamera::TLINE::midpoint() const {

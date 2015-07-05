@@ -30,6 +30,7 @@ public:
 		struct CURVE_FIT {
 			float a;
 			float b;
+			CURVE_FIT(float a_, float b_) : a(a_), b(b_) {}
 		};
 
 		static const int kCapturedMidpoints = 10;
