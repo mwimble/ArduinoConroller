@@ -1,0 +1,8 @@
+prefix=/home/pi/ewyn_ws/devel
+
+Name: rosserial_msgs
+Description: Description of rosserial_msgs
+Version: 0.7.1
+Cflags: -I/home/pi/ewyn_ws/devel/include
+Libs: -L/home/pi/ewyn_ws/devel/lib 
+Requires: message_runtime

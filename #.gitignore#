@@ -1,0 +1,122 @@
+<<<<<<< HEAD
+# Executables #
+###############
+build
+control
+lidarTest
+motorTest
+newVersion
+pintest
+postinst
+postrm
+t1
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+a.out
+
+# CMakeFiles #
+##############
+*.bin
+*.cmake
+*.cache
+CMakeCache.txt
+CMakeCCompilerId.c
+CMakeCXXCompilerId.cpp
+build.make
+C.includecache
+depend.*
+flags.make
+link.txt
+progress.make
+Makefile2
+progress.marks
+TargetDirectories.txt
+CMakeLists.txt
+ 
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+ 
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+*~
+ 
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Flash images #
+################
+*.img
+=======
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# kernel intermedate files
+*.o.cmd
+*.ko
+modules.order
+Module.symvers
+.tmp_versions
+
+# Mac os DS_Store
+.DS_Store
+
+# Visual Studio user related project files
+*.opensdf
+*.sdf
+*.suo
+*.tlog
+*.log
+*.user
+
+# XCode user related project files
+xcshareddata
+xcuserdata
+
+# Build result
+Debug
+Release
+build
+doc
+>>>>>>> 10fdea21f0b9dcb96a4580cbeb0c0ad04495119b
+ArduinoController/
+Docs/

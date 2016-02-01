@@ -32,6 +32,7 @@ ros::Subscriber<geometry_msgs::Twist> sub("turtle1/cmd_vel", &messageCb);
 
 void setup()
 { 
+  Serial.begin(57600);
   pinMode(13, OUTPUT);
   nh.initNode();
   nh.subscribe(sub);

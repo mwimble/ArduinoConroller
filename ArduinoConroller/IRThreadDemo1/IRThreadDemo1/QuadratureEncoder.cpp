@@ -1,8 +1,8 @@
 #include "QuadratureEncoder.h"
 
 QuadratureEncoder::QuadratureEncoder() {
-    pinMode(QEA, INPUT_PULLUP);
-    pinMode(QEB, INPUT_PULLUP);
+    pinMode(SIGA, INPUT_PULLUP);
+    pinMode(SIGB, INPUT_PULLUP);
     attachInterrupt(QEA, qeaChange, CHANGE);
     attachInterrupt(QEB, qebChange, CHANGE);
 }

@@ -1,0 +1,18 @@
+<package>
+  <description brief="summit_xl_description">
+
+     summit_xl_description
+
+  </description>
+  <author>Roberto</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/summit_xl_description</url>
+  <depend package="roscpp"/>
+  <depend package="std_srvs"/>
+  <depend package="std_msgs"/>
+  <depend package="tf"/>
+
+</package>
+
+

@@ -1,0 +1,15 @@
+<package>
+  <description brief="robotnik_worlds">
+
+     robotnik_worlds
+	Stage worlds of the robotnik office
+
+  </description>
+  <author>Roberto</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/robotnik_worlds</url>
+
+</package>
+
+

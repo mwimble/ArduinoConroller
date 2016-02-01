@@ -1,0 +1,8 @@
+prefix=/home/pi/ewyn_ws/devel
+
+Name: rosserial_windows
+Description: Description of rosserial_windows
+Version: 0.7.1
+Cflags: 
+Libs: -L/home/pi/ewyn_ws/devel/lib 
+Requires: 

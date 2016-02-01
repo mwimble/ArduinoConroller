@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="summit_xl_odometry" type="summit_xl_odometry" name="summit_xl_odometry_node" output="screen"/>
+  <node pkg="summit_xl_tf" type="summit_xl_tf" name="summit_xl_tf_node" output="screen"/>
+</launch>
+

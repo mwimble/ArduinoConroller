@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot name="simple_tree">
+  <link name="world"/>
+  <joint name="my_tree_joint" type="fixed" >  <!-- continuous --> 
+    <!-- axis is in the parent link frame coordintates -->
+    <axis xyz="0 0 1" />
+    <parent link="world" />
+    <child link="my_tree" />
+    <!-- initial pose of my_tree in the parent frame coordiantes -->
+    <origin xyz="0 0 0.0" rpy="1.57 0 0" />
+  </joint>
+  <link name="my_tree">
+    <inertial>
+      <mass value="10.0" />
+      <!-- center of mass (com) is defined w.r.t. link local coordinate system -->
+      <origin xyz="0 0 0" /> 
+      <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="100.0"  iyz="0.0"  izz="1.0" />
+    </inertial>
+    <visual>
+      <!-- visual origin is defined w.r.t. link local coordinate system -->
+      <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+	 <mesh filename="package://summit_xl_description/Media/models/tree3.stl" scale="1.0 1.0 1.0"/>
+       </geometry>
+       <!-- material name="grey">
+		<color rgba="0.5 0.5 0.5 1"/>
+       </material -->
+    </visual>
+
+    <collision>
+      <!-- collision origin is defined w.r.t. link local coordinate system -->
+      <origin xyz="0 0 0" rpy="0 0 0 " />
+       <geometry>
+	 <mesh filename="package://summit_xl_description/Media/models/tree3.stl" scale="1.0 1.0 1.0"/>
+       </geometry>
+    </collision>
+  </link>
+  <gazebo reference="my_tree">
+    <material>Gazebo/Blue</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+</robot>

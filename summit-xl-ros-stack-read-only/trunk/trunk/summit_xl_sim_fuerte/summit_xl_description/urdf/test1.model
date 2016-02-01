@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+<model:physical name="sphere1_model">
+  <xyz>2.15 -1.68 1.2</xyz>
+  <rpy>0.0 0.0 0.0</rpy>
+  <static>false</static>
+  <laserFiducialId>1</laserFiducialId>
+  <laserRetro>0.5</laserRetro>
+
+  <body:sphere name="sphere1_body">
+    <geom:sphere name="sphere1_geom">
+      <size>.2</size>
+      <mass>1</mass>
+      <visual>
+        <scale>.2 .2 .2</scale>
+        <mesh>unit_sphere</mesh>
+        <material>Gazebo/Grey</material>
+      </visual>
+    </geom:sphere>
+
+    <sensor:contact name="base_contact_sensor">
+        <geom>base_footprint_geom</geom>
+        <updateRate>100.0</updateRate>
+        <controller:gazebo_ros_bumper name="base_gazebo_ros_bumper_controller" plugin="libgazebo_ros_bumper.so">
+            <alwaysOn>true</alwaysOn>
+            <updateRate>100.0</updateRate>
+            <bumperTopicName>base_bumper</bumperTopicName>
+            <interface:bumper name="base_bumper_iface" />ros
+            <robotNamespace>/</robotNamespace>
+        </controller:gazebo_ros_bumper>
+    </sensor:contact>
+
+    <sensor:ray name="base_laser">
+        <rayCount>640</rayCount>
+        <rangeCount>640</rangeCount>
+        <laserCount>1</laserCount>
+        <origin>0.0 0.0 0.0</origin>
+        <displayRays>false</displayRays>
+        <minAngle>-129.998394137</minAngle>
+        <maxAngle>129.998394137</maxAngle>
+        <minRange>0.08</minRange>
+        <maxRange>10.0</maxRange>
+        <resRange>0.01</resRange>
+        <updateRate>20</updateRate>
+        <controller:gazebo_ros_laser name="gazebo_ros_base_laser_controller" plugin="libgazebo_ros_laser.so">
+            <gaussianNoise>0.005</gaussianNoise>
+            <alwaysOn>true</alwaysOn>
+            <updateRate>20</updateRate>
+            <topicName>base_scan</topicName>
+            <frameName>base_footprint</frameName>
+            <interface:laser name="gazebo_ros_base_laser_iface" />
+            <robotNamespace>/</robotNamespace>
+        </controller:gazebo_ros_laser>
+        <xyz>0.275 0 0.303</xyz>
+        <rpy>0 -0 0</rpy>
+    </sensor:ray>
+
+  </body:sphere>
+
+
+    <body:empty name="base_footprint">
+        <massMatrix>true</massMatrix>
+        <mass>118.001</mass>
+        <ixx>8.36506</ixx>
+        <ixy>-0.00971993</ixy>
+        <ixz>1.88991</ixz>
+        <iyy>8.46638</iyy>
+        <iyz>-0.00737958</iyz>
+        <izz>3.78747</izz>
+        <cx>0</cx>
+        <cy>0</cy>
+        <cz>0</cz>
+        <xyz>0 0 0</xyz>
+        <rpy>0 -0 0</rpy>
+        <geom:box name="base_footprint_geom">
+            <xyz>0 0 0.071</xyz>
+            <rpy>0 -0 0</rpy>
+            <size>0.001 0.001 0.001</size>
+            <visual>
+                <xyz>0 0 -0.071</xyz>
+                <rpy>0 -0 0</rpy>
+                <scale>0.01 0.01 0.01</scale>
+                <mesh>unit_box</mesh>
+            </visual>
+        </geom:box>
+        <geom:box name="base_footprint_geom_base_bellow_link">
+            <xyz>-0.29 0 0.851</xyz>
+            <rpy>0 -0 0</rpy>
+            <size>0.05 0.37 0.3</size>
+            <genTexCoord>true</genTexCoord>
+            <visual>
+                <xyz>0 0 0</xyz>
+                <rpy>0 -0 0</rpy>
+                <scale>0.05 0.37 0.3</scale>
+                <mesh>unit_box</mesh>
+                <material>PR2/Black</material>
+            </visual>
+        </geom:box>
+        <geom:trimesh name="base_footprint_geom_base_link">
+            <xyz>0 0 0.051</xyz>
+            <rpy>0 -0 0</rpy>
+            <scale>1 1 1</scale>
+            <mesh>/wg/stor5b/hsu/projects/diamondback_release/stacks/pr2_common/pr2_description/meshes/base_v0/base_L.stl</mesh>
+            <genTexCoord>true</genTexCoord>
+            <visual>
+                <xyz>0 0 0</xyz>
+                <rpy>0 -0 0</rpy>
+                <scale>1 1 1</scale>
+                <mesh>/wg/stor5b/hsu/projects/diamondback_release/stacks/pr2_common/pr2_description/meshes/base_v0/base.dae</mesh>
+            </visual>
+        </geom:trimesh>
+        <sensor:contact name="base_contact_sensor">
+            <updateRate>100.0</updateRate>
+            <controller:gazebo_ros_bumper name="base_gazebo_ros_bumper_controller" plugin="libgazebo_ros_bumper.so">
+                <alwaysOn>true</alwaysOn>
+                <updateRate>100.0</updateRate>
+                <bumperTopicName>base_bumper</bumperTopicName>
+                <interface:bumper name="base_bumper_iface" />
+            </controller:gazebo_ros_bumper>
+            <geom>base_footprint_geom_base_link</geom>
+        </sensor:contact>
+        <turnGravityOff>false</turnGravityOff>
+        <selfCollide>false</selfCollide>
+        <sensor:ray name="base_laser">
+            <rayCount>640</rayCount>
+            <rangeCount>640</rangeCount>
+            <laserCount>1</laserCount>
+            <origin>0.0 0.0 0.0</origin>
+            <displayRays>false</displayRays>
+            <minAngle>-129.998394137</minAngle>
+            <maxAngle>129.998394137</maxAngle>
+            <minRange>0.08</minRange>
+            <maxRange>10.0</maxRange>
+            <resRange>0.01</resRange>
+            <updateRate>20</updateRate>
+            <controller:gazebo_ros_laser name="gazebo_ros_base_laser_controller" plugin="libgazebo_ros_laser.so">
+                <gaussianNoise>0.005</gaussianNoise>
+                <alwaysOn>true</alwaysOn>
+                <updateRate>20</updateRate>
+                <topicName>base_scan</topicName>
+                <frameName>base_laser_link</frameName>
+                <interface:laser name="gazebo_ros_base_laser_iface" />
+            </controller:gazebo_ros_laser>
+            <xyz>0.275 0 0.303</xyz>
+            <rpy>0 -0 0</rpy>
+        </sensor:ray>
+
+        <sensor:camera name="narrow_stereo_gazebo_l_stereo_camera_sensor">
+            <imageSize>640 480</imageSize>
+            <imageFormat>L8</imageFormat>
+            <hfov>45</hfov>
+            <nearClip>0.1</nearClip>
+            <farClip>100</farClip>
+            <updateRate>25.0</updateRate>
+            <controller:gazebo_ros_camera name="narrow_stereo_gazebo_l_stereo_camera_controller" plugin="libgazebo_ros_camera.so">
+                <alwaysOn>true</alwaysOn>
+                <updateRate>25.0</updateRate>
+                <cameraName>narrow_stereo/left</cameraName>
+                <imageTopicName>image_raw</imageTopicName>
+                <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                <frameName>narrow_stereo_optical_frame</frameName>
+                <hackBaseline>0</hackBaseline>
+                <CxPrime>320.5</CxPrime>
+                <Cx>320.5</Cx>
+                <Cy>240.5</Cy>
+                <!-- image_width / (2*tan(hfov_radian /2)) -->
+                <!-- 320 for wide and 772.55 for narrow stereo camera -->
+                <focal_length>772.55</focal_length>
+                <distortion_k1>0.0</distortion_k1>
+                <distortion_k2>0.0</distortion_k2>
+                <distortion_k3>0.0</distortion_k3>
+                <distortion_t1>0.0</distortion_t1>
+                <distortion_t2>0.0</distortion_t2>
+                <interface:camera name="narrow_stereo_gazebo_l_stereo_camera_iface" />
+            </controller:gazebo_ros_camera>
+            <xyz>0.0232 0.06 0.098</xyz>
+            <rpy>0 -0 0</rpy>
+        </sensor:camera>
+
+    </body:empty>
+
+</model:physical>

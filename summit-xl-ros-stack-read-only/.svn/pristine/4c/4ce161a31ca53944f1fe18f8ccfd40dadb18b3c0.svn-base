@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+  <master auto="start"/>
+  <param name="/use_sim_time" value="true"/>
+
+  <!-- launch move_base_node for planning and control -->
+  <!-- remap from cmd_vel to cmd_vel1 -->
+  <include file="$(find summit_xl_sbpl_nav)/launch/move_base/move_base_sbpl.xml" />
+  
+  <!-- adapts cmd_vel from diff to ackerman -->
+  <node name="summit_xl_sbpl_nav" pkg="summit_xl_sbpl_nav" type="summit_xl_sbpl_nav" respawn="false" />
+
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find robotnik_worlds)/robotnik.png 0.025" />
+
+  <node pkg="stage" type="stageros" name="stageros" args="$(find robotnik_worlds)/robotnik.world" respawn="false" >
+    <param name="base_watchdog_timeout" value="0.2"/>
+  </node>
+
+  <node name="fake_localization" pkg="fake_localization" type="fake_localization" respawn="false" /> 
+
+  <!-- nav_view replaced by rviz visualization and goal setting -->
+  <include file="$(find summit_xl_sbpl_nav)/launch/rviz.xml"/>
+</launch>

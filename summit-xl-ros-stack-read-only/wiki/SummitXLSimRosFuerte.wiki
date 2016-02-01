@@ -1,0 +1,34 @@
+#labels SummitXL,Summit,Fuerte
+= Packages of the SummitXL stack =
+
+*robotnik_worlds*
+
+This package contains .world .inc files to define the Robotnik offices world to be used in simulation.
+
+*summit_xl_2dnav*
+
+This package contains all the configuration files needed to execute the AMCL and SLAM navigation algorithms in simulation.
+
+*summit_xl_ctrl*
+
+Robot Gazebo plugin controller. Implements the control of the Skid-steering kinematics of the SummitXL robot. Will include different types of wheels soon.
+
+*summit_xl_description*
+
+The urdf, meshes, and other elements needed in the description are contained here.
+Note that the ackerman steering contains several closed kinematic chains that have been simulated by single joints with a type of 'electronic gearing' of the controller.
+
+*summit_xl_exploration*
+Adaption of the demos done by Charles DuHadway, Benjamin Pitzer for the bosch-ros-pkg but using the SummitXL robot and our environment. 
+
+*summit_xl_joystick*
+
+This package allows using a joystick gamepad (PS3, Logitech, Thrustmaster, etc.) with the summit_xl_ctrl, sending the messages received through the joystick input, correctly adapted, to the "summit_xl_ctrl" command topic.
+
+*summit_xl_odometry*
+
+Computes the odometry of the robot using the same procedure as the robot, i.e. using the joint movements and a IMU. Publish these odometry to /odom. May be feedbacked with a kalman filter to obtain a better trasformation through /map and /odom frame. 
+
+*summit_xl_sbpl_nav*
+
+Use of the sbpl and sbpl_lattice_planner to create navigation plans. Planning restricted to skid-steering kinematics. The pose following works perfectly for the SummitXL kinematics.

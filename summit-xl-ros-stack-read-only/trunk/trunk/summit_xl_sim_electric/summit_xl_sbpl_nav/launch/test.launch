@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+  <master auto="start"/>
+  <param name="/use_sim_time" value="true"/>
+
+  <!-- send summit_xl.urdf to param server -->
+  <param name="robot_description" textfile="$(find summit_xl_description)/urdf/summit_xl.urdf" />
+
+  <!-- launch move_base_node for planning and control -->
+  <include file="$(find summit_xl_sbpl_nav)/launch/move_base/move_base_sbpl.xml" />
+  
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find robotnik_worlds)/robotnik.png 0.025" />
+
+  <!-- Publish needed transform -->
+  <node pkg="summit_xl_tf" name="summit_xl_tf" type="summit_xl_tf" output="screen" />
+  
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+
+  <node pkg="stage" type="stageros" name="stageros" args="$(find robotnik_worlds)/robotnik.world" respawn="false" >
+    <param name="base_watchdog_timeout" value="0.2"/>
+  </node>
+
+  <node name="fake_localization" pkg="fake_localization" type="fake_localization" respawn="false" /> 
+
+  <!-- nav_view replaced by rviz visualization and goal setting -->
+  <include file="$(find summit_xl_sbpl_nav)/launch/rviz.xml"/>
+</launch>

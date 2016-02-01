@@ -1,0 +1,6 @@
+summit_xl_ctrl:
+     type: summit_xl_ctrl/SummitXLControllerPlugin
+     joint_blw: joint_back_left_wheel
+     joint_flw: joint_front_left_wheel
+     joint_brw: joint_back_right_wheel
+     joint_frw: joint_front_right_wheel

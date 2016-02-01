@@ -1,0 +1,5 @@
+<library path="lib/libsummit_xl_ctrl_lib">
+  <class name="summit_xl_ctrl/SummitXLControllerPlugin" 
+         type="summit_xl_ctrl_ns::SummitXLControllerClass"           
+         base_class_type="pr2_controller_interface::Controller" />
+</library>

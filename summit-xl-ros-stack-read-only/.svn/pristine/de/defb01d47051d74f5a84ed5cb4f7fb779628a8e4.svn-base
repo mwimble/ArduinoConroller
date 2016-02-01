@@ -1,0 +1,38 @@
+bh:
+  j32_position_controller:
+    type: effort_controllers/JointPositionController
+#    type: effort_controllers/JointEffortController
+    joint: j32_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+  j33_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: j33_joint
+    pid: {p: 100.0, i: 1.0, d: 10.0}
+  j11_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: j11_joint
+    pid: {p: 100.0, i: 1.0, d: 10.0}
+  j21_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: j21_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+  j12_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: j12_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+  j22_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: j22_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}    
+  j13_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: j13_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}    
+  j23_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: j23_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}    
+  joint_read_state_controller:
+    type: joint_state_controller/JointStateController 
+    publish_rate: 100.0
+
