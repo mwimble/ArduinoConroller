@@ -27,16 +27,16 @@ bool ledOn;
 
 void geometryMessageCb(const geometry_msgs::Twist& twistMsg) {
   char status[128];
-//  Serial.println("---- ---- ---- ----");
-//  Serial.print("KaimiController new command, qlen: ");
-//  Serial.print(KaimiBase::Singleton()->queueLength());
-//  Serial.print(", x: ");
-//  Serial.print(twistMsg.linear.x);
-//  Serial.print(", y: ");
-//  Serial.print(twistMsg.linear.y);
-//  Serial.print(", z: ");
-//  Serial.println(twistMsg.angular.z);
-// 
+  Serial.println("---- ---- ---- ----");
+  Serial.print("KaimiController new command, qlen: ");
+  Serial.print(KaimiBase::Singleton()->queueLength());
+  Serial.print(", x: ");
+  Serial.print(twistMsg.linear.x);
+  Serial.print(", y: ");
+  Serial.print(twistMsg.linear.y);
+  Serial.print(", z: ");
+  Serial.println(twistMsg.angular.z);
+ 
   robotBase->enqueue(twistMsg);
   robotDisplay->enqueue(twistMsg.linear.x, twistMsg.angular.z);
 
@@ -54,8 +54,8 @@ void setup() {
   robotBase = KaimiBase::Singleton();
   robotDisplay = Display::Singleton();
   nh.loginfo("KaimiBase ready");
+  Serial.println("KaimiBase setup complete");
 }
-
 void loop() {
   nh.spinOnce();
   masterThreadController.run();

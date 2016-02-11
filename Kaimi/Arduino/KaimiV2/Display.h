@@ -127,7 +127,7 @@ class Display : Thread {
 
   public:
 
-    // Singleton instance.
+    // Singleton instance.a
     static Display* Singleton() {
       if (!_singleton) {
         _singleton = new Display();
